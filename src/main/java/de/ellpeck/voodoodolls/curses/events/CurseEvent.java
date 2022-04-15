@@ -19,6 +19,7 @@ public abstract class CurseEvent {
     public abstract void occur(PlayerEntity player, Curse curse);
 
     public static void register(CurseEvent event) {
-        EVENTS.put(event.id, event);
+        if (EVENTS.put(event.id, event) != null)
+            throw new IllegalArgumentException("An event with id " + event.id + " is already registered");
     }
 }

@@ -27,6 +27,7 @@ public abstract class CurseTrigger {
     }
 
     public static void register(CurseTrigger trigger) {
-        TRIGGERS.put(trigger.id, trigger);
+        if (TRIGGERS.put(trigger.id, trigger) != null)
+            throw new IllegalArgumentException("A trigger with id " + trigger.id + " is already registered");
     }
 }
