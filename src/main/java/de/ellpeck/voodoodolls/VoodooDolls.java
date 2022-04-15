@@ -1,13 +1,16 @@
 package de.ellpeck.voodoodolls;
 
 import de.ellpeck.voodoodolls.VoodooDollBlock.Tier;
+import de.ellpeck.voodoodolls.curses.events.CurseEvent;
+import de.ellpeck.voodoodolls.curses.events.ShuffleInventoryEvent;
+import de.ellpeck.voodoodolls.curses.triggers.CurseTrigger;
+import de.ellpeck.voodoodolls.curses.triggers.SleepTrigger;
 import net.minecraft.block.Block;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityType;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
@@ -51,5 +54,9 @@ public class VoodooDolls {
         BLOCKS.register(bus);
         ITEMS.register(bus);
         BLOCK_ENTITIES.register(bus);
+
+        CurseTrigger.register(new SleepTrigger());
+
+        CurseEvent.register(new ShuffleInventoryEvent());
     }
 }
