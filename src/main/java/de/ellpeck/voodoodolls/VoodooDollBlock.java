@@ -1,11 +1,11 @@
 package de.ellpeck.voodoodolls;
 
+import de.ellpeck.voodoodolls.curses.events.CurseEvent;
 import net.minecraft.block.*;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateContainer;
-import net.minecraft.tileentity.AbstractFurnaceTileEntity;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
@@ -14,6 +14,7 @@ import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
+import java.util.function.Function;
 
 public class VoodooDollBlock extends ContainerBlock {
 
@@ -67,9 +68,14 @@ public class VoodooDollBlock extends ContainerBlock {
 
     public enum Tier {
 
-        ONE,
-        TWO,
-        THREE
+        ONE(b -> b.allowedInTierOne),
+        TWO(b -> b.allowedInTierTwo),
+        THREE(b -> b.allowedInTierThree);
 
+        public final Function<CurseEvent.Badness, Boolean> isBadnessAllowed;
+
+        Tier(Function<CurseEvent.Badness, Boolean> isBadnessAllowed) {
+            this.isBadnessAllowed = isBadnessAllowed;
+        }
     }
 }

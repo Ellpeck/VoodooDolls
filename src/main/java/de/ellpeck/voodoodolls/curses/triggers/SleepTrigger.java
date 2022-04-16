@@ -8,7 +8,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 public class SleepTrigger extends CurseTrigger {
 
     public SleepTrigger() {
-        super("sleep", 0.05F);
+        super("sleep", 0.05);
         MinecraftForge.EVENT_BUS.register(this);
     }
 

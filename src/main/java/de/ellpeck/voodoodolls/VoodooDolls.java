@@ -67,6 +67,10 @@ public class VoodooDolls {
         for (CurseTrigger trigger : CurseTrigger.TRIGGERS.values())
             trigger.setupConfig(config);
         config.pop();
+        config.push("curses");
+        for (CurseEvent event : CurseEvent.EVENTS.values())
+            event.setupConfig(config);
+        config.pop();
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, config.build());
     }
 }

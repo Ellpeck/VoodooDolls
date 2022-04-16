@@ -13,7 +13,6 @@ public class Curse implements INBTSerializable<CompoundNBT> {
 
     public CurseTrigger trigger;
     public CurseEvent event;
-    public long lastTriggerTime;
 
     private final World level;
     private final UUID playerId;
@@ -33,8 +32,8 @@ public class Curse implements INBTSerializable<CompoundNBT> {
     public void occur() {
         PlayerEntity player = this.level.getPlayerByUUID(this.playerId);
         if (player != null) {
-            this.event.occur(player, this);
-            this.lastTriggerTime = this.level.getGameTime();
+            if (!this.event.disabled.get())
+                this.event.occur(player, this);
         }
     }
 

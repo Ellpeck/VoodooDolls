@@ -11,7 +11,7 @@ import java.util.List;
 public class ShuffleInventoryEvent extends CurseEvent {
 
     public ShuffleInventoryEvent() {
-        super("shuffle_inventory");
+        super("shuffle_inventory", Badness.BAD);
     }
 
     @Override

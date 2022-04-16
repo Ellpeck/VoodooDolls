@@ -13,11 +13,11 @@ public abstract class CurseTrigger {
     public static final Map<String, CurseTrigger> TRIGGERS = new HashMap<>();
 
     public final String id;
-    public ForgeConfigSpec.ConfigValue<Float> chance;
+    public ForgeConfigSpec.ConfigValue<Double> chance;
 
-    private final float defaultChance;
+    private final double defaultChance;
 
-    public CurseTrigger(String id, float defaultChance) {
+    public CurseTrigger(String id, double defaultChance) {
         this.id = id;
         this.defaultChance = defaultChance;
     }
