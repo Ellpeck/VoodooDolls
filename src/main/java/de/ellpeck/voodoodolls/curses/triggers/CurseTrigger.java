@@ -24,11 +24,13 @@ public abstract class CurseTrigger {
 
     public void setupConfig(ForgeConfigSpec.Builder config) {
         this.chance = config
-                .comment("The chance of the " + this.id + " trigger causing an event when it is triggered")
+                .comment("The chance of the " + this.id + " trigger causing an event when it is triggered. Set to 0 to disable.")
                 .define(this.id + "_chance", this.defaultChance);
     }
 
     protected void trigger(PlayerEntity player) {
+        if (this.chance.get() <= 0)
+            return;
         CurseData data = CurseData.get(player.level);
         for (Curse curse : data.getCurses(player.getUUID())) {
             if (curse.trigger == this && player.getRandom().nextFloat() <= this.chance.get())
