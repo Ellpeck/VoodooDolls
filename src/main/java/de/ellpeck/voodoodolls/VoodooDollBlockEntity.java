@@ -15,7 +15,7 @@ import java.util.UUID;
 public class VoodooDollBlockEntity extends TileEntity implements INameable {
 
     public ITextComponent customName;
-    public UUID id = UUID.randomUUID();
+    public UUID dollId = UUID.randomUUID();
 
     public VoodooDollBlockEntity() {
         super(VoodooDolls.VOODOO_DOLL_BLOCK_ENTITY.get());
@@ -26,7 +26,7 @@ public class VoodooDollBlockEntity extends TileEntity implements INameable {
         super.load(state, nbt);
         if (nbt.contains("CustomName", Constants.NBT.TAG_STRING))
             this.customName = ITextComponent.Serializer.fromJson(nbt.getString("CustomName"));
-        this.id = nbt.getUUID("id");
+        this.dollId = nbt.getUUID("doll_id");
     }
 
     @Override
@@ -34,7 +34,7 @@ public class VoodooDollBlockEntity extends TileEntity implements INameable {
         super.save(nbt);
         if (this.customName != null)
             nbt.putString("CustomName", ITextComponent.Serializer.toJson(this.customName));
-        nbt.putUUID("id", this.id);
+        nbt.putUUID("doll_id", this.dollId);
         return nbt;
     }
 
@@ -56,7 +56,7 @@ public class VoodooDollBlockEntity extends TileEntity implements INameable {
     public Curse getCurse() {
         CurseData data = CurseData.get(this.level);
         for (Curse curse : data.curses.values()) {
-            if (curse.sourceDoll.equals(this.id))
+            if (curse.sourceDoll.equals(this.dollId))
                 return curse;
         }
         return null;

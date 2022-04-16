@@ -74,6 +74,6 @@ public class Curse implements INBTSerializable<CompoundNBT> {
 
         CurseEvent event = events[player.getRandom().nextInt(events.length)];
         CurseTrigger trigger = triggers[player.getRandom().nextInt(triggers.length)];
-        return new Curse(player.level, source.id, player.getUUID(), trigger, event);
+        return new Curse(player.level, source.dollId, player.getUUID(), trigger, event);
     }
 }
