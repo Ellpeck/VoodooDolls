@@ -11,9 +11,12 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntityType;
+import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -58,5 +61,12 @@ public class VoodooDolls {
         CurseTrigger.register(new SleepTrigger());
 
         CurseEvent.register(new ShuffleInventoryEvent());
+
+        ForgeConfigSpec.Builder config = new ForgeConfigSpec.Builder();
+        config.push("triggers");
+        for (CurseTrigger trigger : CurseTrigger.TRIGGERS.values())
+            trigger.setupConfig(config);
+        config.pop();
+        ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, config.build());
     }
 }

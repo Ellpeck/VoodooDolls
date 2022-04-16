@@ -3,6 +3,7 @@ package de.ellpeck.voodoodolls.curses.triggers;
 import de.ellpeck.voodoodolls.curses.Curse;
 import de.ellpeck.voodoodolls.curses.CurseData;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraftforge.common.ForgeConfigSpec;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,16 +13,25 @@ public abstract class CurseTrigger {
     public static final Map<String, CurseTrigger> TRIGGERS = new HashMap<>();
 
     public final String id;
+    public ForgeConfigSpec.ConfigValue<Float> chance;
 
-    public CurseTrigger(String id) {
+    private final float defaultChance;
+
+    public CurseTrigger(String id, float defaultChance) {
         this.id = id;
+        this.defaultChance = defaultChance;
+    }
+
+    public void setupConfig(ForgeConfigSpec.Builder config) {
+        this.chance = config
+                .comment("The chance of the " + this.id + " trigger causing an event when it is triggered")
+                .define(this.id + "_chance", this.defaultChance);
     }
 
     protected void trigger(PlayerEntity player) {
         CurseData data = CurseData.get(player.level);
         for (Curse curse : data.getCurses(player.getUUID())) {
-            // TODO add random chance here
-            if (curse.trigger == this)
+            if (curse.trigger == this && player.getRandom().nextFloat() <= this.chance.get())
                 curse.occur();
         }
     }
