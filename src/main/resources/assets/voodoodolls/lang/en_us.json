@@ -2,5 +2,10 @@
     "itemGroup.voodoodolls": "Voodoo Dolls",
     "block.voodoodolls.voodoo_doll_tier_one": "Voodoo Doll (Tier 1)",
     "block.voodoodolls.voodoo_doll_tier_two": "Voodoo Doll (Tier 2)",
-    "block.voodoodolls.voodoo_doll_tier_three": "Voodoo Doll (Tier 3)"
+    "block.voodoodolls.voodoo_doll_tier_three": "Voodoo Doll (Tier 3)",
+    "info.voodoodolls.cursed": "%s cursed you with %s!",
+    "info.voodoodolls.curse_removed": "%s was destroyed, and the curse %s has been lifted!",
+    "info.voodoodolls.curse": "%s, caused by %s",
+    "curse_trigger.voodoodolls.sleep": "Sleeping",
+    "curse_event.voodoodolls.shuffle_inventory": "Inventory Shuffle"
 }

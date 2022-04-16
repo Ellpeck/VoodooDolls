@@ -1,8 +1,10 @@
 package de.ellpeck.voodoodolls.curses.triggers;
 
+import de.ellpeck.voodoodolls.VoodooDolls;
 import de.ellpeck.voodoodolls.curses.Curse;
 import de.ellpeck.voodoodolls.curses.CurseData;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 import java.util.HashMap;
@@ -26,6 +28,10 @@ public abstract class CurseTrigger {
         this.chance = config
                 .comment("The chance of the " + this.id + " trigger causing an event when it is triggered. Set to 0 to disable.")
                 .define(this.id + "_chance", this.defaultChance);
+    }
+
+    public TranslationTextComponent getDisplayName() {
+        return new TranslationTextComponent("curse_trigger." + VoodooDolls.ID + "." + this.id);
     }
 
     protected void trigger(PlayerEntity player) {

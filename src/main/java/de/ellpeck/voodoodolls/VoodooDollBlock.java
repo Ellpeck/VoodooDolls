@@ -1,8 +1,11 @@
 package de.ellpeck.voodoodolls;
 
+import de.ellpeck.voodoodolls.curses.Curse;
+import de.ellpeck.voodoodolls.curses.CurseData;
 import de.ellpeck.voodoodolls.curses.events.CurseEvent;
 import net.minecraft.block.*;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateContainer;
@@ -10,6 +13,8 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
 import net.minecraft.world.World;
 
@@ -53,12 +58,41 @@ public class VoodooDollBlock extends ContainerBlock {
 
     @Override
     public void setPlacedBy(World world, BlockPos pos, BlockState state, LivingEntity placer, ItemStack stack) {
-        if (stack.hasCustomHoverName()) {
-            TileEntity entity = world.getBlockEntity(pos);
-            if (entity instanceof VoodooDollBlockEntity)
-                ((VoodooDollBlockEntity) entity).customName = stack.getHoverName();
-        }
+        TileEntity entity = world.getBlockEntity(pos);
+        if (entity instanceof VoodooDollBlockEntity) {
+            VoodooDollBlockEntity doll = (VoodooDollBlockEntity) entity;
 
+            if (stack.hasCustomHoverName())
+                doll.customName = stack.getHoverName();
+
+            if (!placer.level.isClientSide && placer instanceof PlayerEntity) {
+                PlayerEntity player = (PlayerEntity) placer;
+                Curse curse = Curse.create(player, doll);
+                if (curse != null) {
+                    CurseData data = CurseData.get(world);
+                    data.getCurses(placer.getUUID()).add(curse);
+                    player.displayClientMessage(new TranslationTextComponent("info." + VoodooDolls.ID + ".cursed", doll.getDisplayName(), curse.getDisplayName()).withStyle(TextFormatting.RED), false);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onRemove(BlockState state, World world, BlockPos pos, BlockState newState, boolean bool) {
+        TileEntity entity = world.getBlockEntity(pos);
+        if (entity instanceof VoodooDollBlockEntity) {
+            VoodooDollBlockEntity doll = (VoodooDollBlockEntity) entity;
+            Curse curse = doll.getCurse();
+            if (curse != null) {
+                CurseData data = CurseData.get(world);
+                data.curses.remove(curse.playerId, curse);
+
+                PlayerEntity player = world.getPlayerByUUID(curse.playerId);
+                if (player != null)
+                    player.displayClientMessage(new TranslationTextComponent("info." + VoodooDolls.ID + ".curse_removed", doll.getDisplayName(), curse.getDisplayName()).withStyle(TextFormatting.GREEN), false);
+            }
+        }
+        super.onRemove(state, world, pos, newState, bool);
     }
 
     @Override

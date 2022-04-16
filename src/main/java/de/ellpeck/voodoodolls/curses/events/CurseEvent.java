@@ -1,7 +1,9 @@
 package de.ellpeck.voodoodolls.curses.events;
 
+import de.ellpeck.voodoodolls.VoodooDolls;
 import de.ellpeck.voodoodolls.curses.Curse;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 import java.util.HashMap;
@@ -33,6 +35,10 @@ public abstract class CurseEvent {
                 .defineEnum(this.id + "_badness", this.defaultBadness);
     }
 
+    public TranslationTextComponent getDisplayName() {
+        return new TranslationTextComponent("curse_event." + VoodooDolls.ID + "." + this.id);
+    }
+
     public static void register(CurseEvent event) {
         if (EVENTS.put(event.id, event) != null)
             throw new IllegalArgumentException("An event with id " + event.id + " is already registered");
@@ -40,9 +46,9 @@ public abstract class CurseEvent {
 
     public enum Badness {
 
-        BAD(true, false, false),
-        WORSE(true, true, false),
-        WORST(false, true, true);
+        BAD(true, true, false),
+        WORSE(false, true, true),
+        WORST(false, false, true);
 
         public final boolean allowedInTierOne;
         public final boolean allowedInTierTwo;

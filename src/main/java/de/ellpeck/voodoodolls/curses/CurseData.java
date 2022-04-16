@@ -11,7 +11,6 @@ import net.minecraft.world.storage.WorldSavedData;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.Collection;
-import java.util.Map;
 import java.util.UUID;
 
 public class CurseData extends WorldSavedData {
@@ -19,7 +18,8 @@ public class CurseData extends WorldSavedData {
     private static final String NAME = VoodooDolls.ID + "_curses";
     private static CurseData clientData;
 
-    private final Multimap<UUID, Curse> curses = ArrayListMultimap.create();
+    public final Multimap<UUID, Curse> curses = ArrayListMultimap.create();
+
     private final World level;
 
     public CurseData(World level) {
@@ -37,20 +37,16 @@ public class CurseData extends WorldSavedData {
         this.curses.clear();
         ListNBT list = nbt.getList("curses", Constants.NBT.TAG_LIST);
         for (int i = 0; i < list.size(); i++) {
-            CompoundNBT entry = list.getCompound(i);
-            UUID player = entry.getUUID("player");
-            this.curses.put(player, new Curse(this.level, player, entry));
+            Curse curse = new Curse(this.level, list.getCompound(i));
+            this.curses.put(curse.playerId, curse);
         }
     }
 
     @Override
     public CompoundNBT save(CompoundNBT nbt) {
         ListNBT list = new ListNBT();
-        for (Map.Entry<UUID, Curse> kv : this.curses.entries()) {
-            CompoundNBT entry = kv.getValue().serializeNBT();
-            entry.putUUID("player", kv.getKey());
-            list.add(entry);
-        }
+        for (Curse curse : this.curses.values())
+            list.add(curse.serializeNBT());
         nbt.put("curses", list);
         return nbt;
     }
