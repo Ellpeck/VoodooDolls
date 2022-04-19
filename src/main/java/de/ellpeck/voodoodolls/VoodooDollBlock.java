@@ -5,7 +5,9 @@ import de.ellpeck.voodoodolls.curses.CurseData;
 import de.ellpeck.voodoodolls.curses.events.CurseEvent;
 import net.minecraft.block.*;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.effect.LightningBoltEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
@@ -78,6 +80,13 @@ public class VoodooDollBlock extends ContainerBlock {
                     player.displayClientMessage(new TranslationTextComponent("info." + VoodooDolls.ID + ".cursed", doll.getDisplayName(), curse.getDisplayName()).withStyle(TextFormatting.RED), false);
                 }
             }
+        }
+
+        if (!world.isClientSide) {
+            LightningBoltEntity lightning = EntityType.LIGHTNING_BOLT.create(world);
+            lightning.moveTo(pos.getX(), pos.getY(), pos.getZ());
+            lightning.setVisualOnly(true);
+            world.addFreshEntity(lightning);
         }
     }
 
