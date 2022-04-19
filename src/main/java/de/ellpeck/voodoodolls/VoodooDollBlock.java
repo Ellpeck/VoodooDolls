@@ -4,15 +4,19 @@ import de.ellpeck.voodoodolls.curses.Curse;
 import de.ellpeck.voodoodolls.curses.CurseData;
 import de.ellpeck.voodoodolls.curses.events.CurseEvent;
 import net.minecraft.block.*;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ActionResultType;
+import net.minecraft.util.Hand;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.BlockRayTraceResult;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
@@ -93,6 +97,18 @@ public class VoodooDollBlock extends ContainerBlock {
             }
         }
         super.onRemove(state, world, pos, newState, bool);
+    }
+
+    @Override
+    public ActionResultType use(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockRayTraceResult hit) {
+        if (world.isClientSide) {
+            TileEntity entity = world.getBlockEntity(pos);
+            if (entity instanceof VoodooDollBlockEntity) {
+                Minecraft.getInstance().setScreen(new VoodooDollScreen((VoodooDollBlockEntity) entity));
+                return ActionResultType.SUCCESS;
+            }
+        }
+        return ActionResultType.PASS;
     }
 
     @Override

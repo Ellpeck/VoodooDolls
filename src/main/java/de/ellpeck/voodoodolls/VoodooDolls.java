@@ -54,6 +54,7 @@ public class VoodooDolls {
 
     public VoodooDolls() {
         IEventBus bus = FMLJavaModLoadingContext.get().getModEventBus();
+        bus.addListener(Network::setup);
         BLOCKS.register(bus);
         ITEMS.register(bus);
         BLOCK_ENTITIES.register(bus);

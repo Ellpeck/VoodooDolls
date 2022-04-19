@@ -4,6 +4,8 @@ import de.ellpeck.voodoodolls.curses.Curse;
 import de.ellpeck.voodoodolls.curses.CurseData;
 import net.minecraft.block.BlockState;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.network.NetworkManager;
+import net.minecraft.network.play.server.SUpdateTileEntityPacket;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.INameable;
 import net.minecraft.util.text.ITextComponent;
@@ -49,6 +51,27 @@ public class VoodooDollBlockEntity extends TileEntity implements INameable {
         return this.customName;
     }
 
+    @Nullable
+    @Override
+    public SUpdateTileEntityPacket getUpdatePacket() {
+        return new SUpdateTileEntityPacket(this.worldPosition, -1, this.getUpdateTag());
+    }
+
+    @Override
+    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
+        this.load(this.getBlockState(), pkt.getTag());
+    }
+
+    @Override
+    public CompoundNBT getUpdateTag() {
+        return this.save(new CompoundNBT());
+    }
+
+    @Override
+    public void handleUpdateTag(BlockState state, CompoundNBT tag) {
+        this.load(state, tag);
+    }
+
     public VoodooDollBlock.Tier getTier() {
         return ((VoodooDollBlock) this.getBlockState().getBlock()).tier;
     }
@@ -61,4 +84,5 @@ public class VoodooDollBlockEntity extends TileEntity implements INameable {
         }
         return null;
     }
+
 }
