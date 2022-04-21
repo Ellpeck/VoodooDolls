@@ -6,6 +6,7 @@
     "info.voodoodolls.cursed": "%s cursed you with %s!",
     "info.voodoodolls.curse_removed": "%s was destroyed, and the curse %s has been lifted!",
     "info.voodoodolls.curse": "%s, caused by %s",
+    "info.voodoodolls.cursed_player": "%s is cursed with %s",
     "curse_trigger.voodoodolls.sleep": "Sleeping",
     "curse_event.voodoodolls.shuffle_inventory": "Inventory Shuffle",
     "screen.voodoodolls.voodoo_doll": "Name this Voodoo Doll"

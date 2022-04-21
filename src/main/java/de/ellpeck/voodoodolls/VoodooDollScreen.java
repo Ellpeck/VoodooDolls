@@ -1,19 +1,24 @@
 package de.ellpeck.voodoodolls;
 
 import com.mojang.blaze3d.matrix.MatrixStack;
+import de.ellpeck.voodoodolls.curses.Curse;
 import joptsimple.internal.Strings;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.client.gui.widget.button.Button;
+import net.minecraft.util.IReorderingProcessor;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.fml.client.gui.widget.ExtendedButton;
+
+import java.util.List;
 
 public class VoodooDollScreen extends Screen {
 
     private static final ResourceLocation TEXTURE = new ResourceLocation(VoodooDolls.ID, "textures/ui/voodoo_doll.png");
     private static final int WIDTH = 176;
-    private static final int HEIGHT = 58;
+    private static final int HEIGHT = 93;
 
     private final VoodooDollBlockEntity doll;
     private TextFieldWidget textField;
@@ -28,13 +33,13 @@ public class VoodooDollScreen extends Screen {
     protected void init() {
         int left = (this.width - WIDTH) / 2;
         int top = (this.height - HEIGHT) / 2;
-        this.textField = this.addWidget(new TextFieldWidget(this.font, left + 8, top + 20, 161, 9, null, this.title));
+        this.textField = this.addWidget(new TextFieldWidget(this.font, left + 8, top + 55, 161, 9, null, this.title));
         this.textField.setMaxLength(50);
         this.textField.setBordered(false);
         this.textField.setTextColor(16777215);
         this.textField.setValue(this.doll.getName().getString());
-        this.okButton = this.addButton(new ExtendedButton(left + (WIDTH - 50) / 2, top + 33, 50, 20, new TranslationTextComponent("gui.ok"), b -> {
-            Network.sendToServer(new Network.ChangeVoodooDollName(this.doll.getBlockPos(), this.textField.getValue()));
+        this.okButton = this.addButton(new ExtendedButton(left + (WIDTH - 50) / 2, top + 68, 50, 20, new TranslationTextComponent("gui.ok"), b -> {
+            Packets.sendToServer(new Packets.VoodooDollName(this.doll.getBlockPos(), this.textField.getValue()));
             this.minecraft.setScreen(null);
         }));
     }
@@ -48,7 +53,15 @@ public class VoodooDollScreen extends Screen {
         this.minecraft.textureManager.bind(TEXTURE);
         this.blit(stack, left, top, 0, 0, WIDTH, HEIGHT);
 
-        this.font.draw(stack, this.title, left + 8, top + 6, 4210752);
+        Curse curse = this.doll.getCurse();
+        if (curse != null) {
+            ITextComponent text = new TranslationTextComponent("info." + VoodooDolls.ID + ".cursed_player", curse.playerName, curse.getDisplayName());
+            List<IReorderingProcessor> split = this.font.split(text, WIDTH - 16);
+            for (int i = 0; i < split.size(); i++)
+                this.font.draw(stack, split.get(i), left + 8, top + 8 + i * 10, 4210752);
+        }
+
+        this.font.draw(stack, this.title, left + 8, top + 43, 4210752);
         this.textField.render(stack, x, y, pt);
         super.render(stack, x, y, pt);
     }

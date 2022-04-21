@@ -1,7 +1,10 @@
 package de.ellpeck.voodoodolls;
 
+import de.ellpeck.voodoodolls.curses.CurseData;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ResourceLocation;
@@ -15,14 +18,15 @@ import net.minecraftforge.fml.network.simple.SimpleChannel;
 
 import java.util.function.Supplier;
 
-public class Network {
+public class Packets {
 
     private static final String VERSION = "1.0";
     private static SimpleChannel network;
 
     public static void setup(FMLCommonSetupEvent ignoredEvent) {
         network = NetworkRegistry.newSimpleChannel(new ResourceLocation(VoodooDolls.ID, "network"), () -> VERSION, VERSION::equals, VERSION::equals);
-        network.registerMessage(0, ChangeVoodooDollName.class, ChangeVoodooDollName::toBytes, ChangeVoodooDollName::fromBytes, ChangeVoodooDollName::onMessage);
+        network.registerMessage(0, VoodooDollName.class, VoodooDollName::toBytes, VoodooDollName::fromBytes, VoodooDollName::onMessage);
+        network.registerMessage(1, Curses.class, Curses::toBytes, Curses::fromBytes, Curses::onMessage);
     }
 
     public static void sendToAll(Object message) {
@@ -37,27 +41,27 @@ public class Network {
         network.send(PacketDistributor.SERVER.noArg(), message);
     }
 
-    public static class ChangeVoodooDollName {
+    public static class VoodooDollName {
 
         private final BlockPos pos;
         private final String name;
 
-        public ChangeVoodooDollName(BlockPos pos, String name) {
+        public VoodooDollName(BlockPos pos, String name) {
             this.pos = pos;
             this.name = name;
         }
 
-        public static ChangeVoodooDollName fromBytes(PacketBuffer buf) {
-            return new ChangeVoodooDollName(buf.readBlockPos(), buf.readUtf());
+        public static VoodooDollName fromBytes(PacketBuffer buf) {
+            return new VoodooDollName(buf.readBlockPos(), buf.readUtf());
         }
 
-        public static void toBytes(ChangeVoodooDollName packet, PacketBuffer buf) {
+        public static void toBytes(VoodooDollName packet, PacketBuffer buf) {
             buf.writeBlockPos(packet.pos);
             buf.writeUtf(packet.name);
         }
 
         @SuppressWarnings("Convert2Lambda")
-        public static void onMessage(ChangeVoodooDollName message, Supplier<NetworkEvent.Context> ctx) {
+        public static void onMessage(VoodooDollName message, Supplier<NetworkEvent.Context> ctx) {
             ctx.get().enqueueWork(new Runnable() {
                 @Override
                 public void run() {
@@ -67,6 +71,35 @@ public class Network {
                         ((VoodooDollBlockEntity) entity).customName = new StringTextComponent(message.name);
                         entity.getLevel().sendBlockUpdated(entity.getBlockPos(), entity.getBlockState(), entity.getBlockState(), 3);
                     }
+                }
+            });
+            ctx.get().setPacketHandled(true);
+        }
+    }
+
+    public static class Curses {
+
+        private final CompoundNBT data;
+
+        public Curses(CompoundNBT data) {
+            this.data = data;
+        }
+
+        public static Curses fromBytes(PacketBuffer buf) {
+            return new Curses(buf.readNbt());
+        }
+
+        public static void toBytes(Curses packet, PacketBuffer buf) {
+            buf.writeNbt(packet.data);
+        }
+
+        @SuppressWarnings("Convert2Lambda")
+        public static void onMessage(Curses message, Supplier<NetworkEvent.Context> ctx) {
+            ctx.get().enqueueWork(new Runnable() {
+                @Override
+                public void run() {
+                    CurseData data = CurseData.get(Minecraft.getInstance().level);
+                    data.deserializeNBT(message.data);
                 }
             });
             ctx.get().setPacketHandled(true);

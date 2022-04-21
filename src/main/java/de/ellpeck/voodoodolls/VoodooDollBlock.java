@@ -77,6 +77,7 @@ public class VoodooDollBlock extends ContainerBlock {
                 if (curse != null) {
                     CurseData data = CurseData.get(world);
                     data.getCurses(placer.getUUID()).add(curse);
+                    Packets.sendToAll(data.getPacket());
                     player.displayClientMessage(new TranslationTextComponent("info." + VoodooDolls.ID + ".cursed", doll.getDisplayName(), curse.getDisplayName()).withStyle(TextFormatting.RED), false);
                 }
             }
@@ -99,6 +100,7 @@ public class VoodooDollBlock extends ContainerBlock {
             if (curse != null) {
                 CurseData data = CurseData.get(world);
                 data.curses.remove(curse.playerId, curse);
+                Packets.sendToAll(data.getPacket());
 
                 PlayerEntity player = world.getPlayerByUUID(curse.playerId);
                 if (player != null)

@@ -2,6 +2,7 @@ package de.ellpeck.voodoodolls.curses;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
+import de.ellpeck.voodoodolls.Packets;
 import de.ellpeck.voodoodolls.VoodooDolls;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -35,7 +36,7 @@ public class CurseData extends WorldSavedData {
     @Override
     public void load(CompoundNBT nbt) {
         this.curses.clear();
-        ListNBT list = nbt.getList("curses", Constants.NBT.TAG_LIST);
+        ListNBT list = nbt.getList("curses", Constants.NBT.TAG_COMPOUND);
         for (int i = 0; i < list.size(); i++) {
             Curse curse = new Curse(this.level, list.getCompound(i));
             this.curses.put(curse.playerId, curse);
@@ -53,6 +54,10 @@ public class CurseData extends WorldSavedData {
 
     public Collection<Curse> getCurses(UUID player) {
         return this.curses.get(player);
+    }
+
+    public Packets.Curses getPacket() {
+        return new Packets.Curses(this.serializeNBT());
     }
 
     public static CurseData get(World level) {

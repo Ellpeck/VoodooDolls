@@ -18,13 +18,15 @@ public class Curse implements INBTSerializable<CompoundNBT> {
     public CurseTrigger trigger;
     public CurseEvent event;
     public UUID playerId;
+    public String playerName;
 
     private final World level;
 
-    public Curse(World level, UUID sourceDoll, UUID playerId, CurseTrigger trigger, CurseEvent event) {
+    public Curse(World level, UUID sourceDoll, UUID playerId, String playerName, CurseTrigger trigger, CurseEvent event) {
         this.level = level;
         this.sourceDoll = sourceDoll;
         this.playerId = playerId;
+        this.playerName = playerName;
         this.trigger = trigger;
         this.event = event;
     }
@@ -41,6 +43,7 @@ public class Curse implements INBTSerializable<CompoundNBT> {
         nbt.putString("event", this.event.id);
         nbt.putUUID("source", this.sourceDoll);
         nbt.putUUID("player", this.playerId);
+        nbt.putString("player_name", this.playerName);
         return nbt;
     }
 
@@ -50,6 +53,7 @@ public class Curse implements INBTSerializable<CompoundNBT> {
         this.event = CurseEvent.EVENTS.get(nbt.getString("event"));
         this.sourceDoll = nbt.getUUID("source");
         this.playerId = nbt.getUUID("player");
+        this.playerName = nbt.getString("player_name");
     }
 
     public void occur() {
@@ -74,6 +78,6 @@ public class Curse implements INBTSerializable<CompoundNBT> {
 
         CurseEvent event = events[player.getRandom().nextInt(events.length)];
         CurseTrigger trigger = triggers[player.getRandom().nextInt(triggers.length)];
-        return new Curse(player.level, source.dollId, player.getUUID(), trigger, event);
+        return new Curse(player.level, source.dollId, player.getUUID(), player.getGameProfile().getName(), trigger, event);
     }
 }
