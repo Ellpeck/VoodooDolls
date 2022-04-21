@@ -77,12 +77,6 @@ public class VoodooDollBlockEntity extends TileEntity implements INameable {
     }
 
     public Curse getCurse() {
-        CurseData data = CurseData.get(this.level);
-        for (Curse curse : data.curses.values()) {
-            if (curse.sourceDoll.equals(this.dollId))
-                return curse;
-        }
-        return null;
+        return CurseData.get(this.level).getCurse(this.dollId);
     }
-
 }

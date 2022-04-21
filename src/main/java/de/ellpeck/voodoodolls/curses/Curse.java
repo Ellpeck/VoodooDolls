@@ -19,6 +19,7 @@ public class Curse implements INBTSerializable<CompoundNBT> {
     public CurseEvent event;
     public UUID playerId;
     public String playerName;
+    public boolean isInactive;
 
     private final World level;
 
@@ -44,6 +45,7 @@ public class Curse implements INBTSerializable<CompoundNBT> {
         nbt.putUUID("source", this.sourceDoll);
         nbt.putUUID("player", this.playerId);
         nbt.putString("player_name", this.playerName);
+        nbt.putBoolean("inactive", this.isInactive);
         return nbt;
     }
 
@@ -54,9 +56,12 @@ public class Curse implements INBTSerializable<CompoundNBT> {
         this.sourceDoll = nbt.getUUID("source");
         this.playerId = nbt.getUUID("player");
         this.playerName = nbt.getString("player_name");
+        this.isInactive = nbt.getBoolean("doll_id");
     }
 
     public void occur() {
+        if (this.isInactive)
+            return;
         PlayerEntity player = this.level.getPlayerByUUID(this.playerId);
         if (player != null) {
             if (!this.event.disabled.get())

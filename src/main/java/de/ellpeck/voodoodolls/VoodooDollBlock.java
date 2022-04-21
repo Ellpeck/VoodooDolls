@@ -11,6 +11,7 @@ import net.minecraft.entity.effect.LightningBoltEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItemUseContext;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.state.StateContainer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.ActionResultType;
@@ -73,10 +74,23 @@ public class VoodooDollBlock extends ContainerBlock {
 
             if (!placer.level.isClientSide && placer instanceof PlayerEntity) {
                 PlayerEntity player = (PlayerEntity) placer;
-                Curse curse = Curse.create(player, doll);
-                if (curse != null) {
-                    CurseData data = CurseData.get(world);
+                CurseData data = CurseData.get(world);
+                Curse curse = null;
+                // get curse from saved doll id if it exists
+                if (stack.hasTag()) {
+                    CompoundNBT tag = stack.getTag();
+                    if (tag.hasUUID("doll_id")) {
+                        doll.dollId = tag.getUUID("doll_id");
+                        curse = data.getCurse(doll.dollId);
+                        curse.isInactive = false;
+                    }
+                }
+                // otherwise, create a new curse
+                if (curse == null) {
+                    curse = Curse.create(player, doll);
                     data.getCurses(placer.getUUID()).add(curse);
+                }
+                if (curse != null) {
                     Packets.sendToAll(data.getPacket());
                     player.displayClientMessage(new TranslationTextComponent("info." + VoodooDolls.ID + ".cursed", doll.getDisplayName(), curse.getDisplayName()).withStyle(TextFormatting.RED), false);
                 }
@@ -98,9 +112,8 @@ public class VoodooDollBlock extends ContainerBlock {
             VoodooDollBlockEntity doll = (VoodooDollBlockEntity) entity;
             Curse curse = doll.getCurse();
             if (curse != null) {
-                CurseData data = CurseData.get(world);
-                data.curses.remove(curse.playerId, curse);
-                Packets.sendToAll(data.getPacket());
+                curse.isInactive = true;
+                Packets.sendToAll(CurseData.get(world).getPacket());
 
                 PlayerEntity player = world.getPlayerByUUID(curse.playerId);
                 if (player != null)

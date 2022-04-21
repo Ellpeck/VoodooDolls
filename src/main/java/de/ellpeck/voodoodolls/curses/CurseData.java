@@ -19,8 +19,7 @@ public class CurseData extends WorldSavedData {
     private static final String NAME = VoodooDolls.ID + "_curses";
     private static CurseData clientData;
 
-    public final Multimap<UUID, Curse> curses = ArrayListMultimap.create();
-
+    private final Multimap<UUID, Curse> curses = ArrayListMultimap.create();
     private final World level;
 
     public CurseData(World level) {
@@ -54,6 +53,14 @@ public class CurseData extends WorldSavedData {
 
     public Collection<Curse> getCurses(UUID player) {
         return this.curses.get(player);
+    }
+
+    public Curse getCurse(UUID dollId) {
+        for (Curse curse : this.curses.values()) {
+            if (curse.sourceDoll.equals(dollId))
+                return curse;
+        }
+        return null;
     }
 
     public Packets.Curses getPacket() {
