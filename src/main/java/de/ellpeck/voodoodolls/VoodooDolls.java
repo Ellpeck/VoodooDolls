@@ -3,15 +3,16 @@ package de.ellpeck.voodoodolls;
 import de.ellpeck.voodoodolls.VoodooDollBlock.Tier;
 import de.ellpeck.voodoodolls.curses.events.CurseEvent;
 import de.ellpeck.voodoodolls.curses.events.ShuffleInventoryEvent;
-import de.ellpeck.voodoodolls.curses.triggers.CurseTrigger;
-import de.ellpeck.voodoodolls.curses.triggers.SleepTrigger;
+import de.ellpeck.voodoodolls.curses.triggers.*;
 import net.minecraft.block.Block;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.RegistryObject;
@@ -60,6 +61,15 @@ public class VoodooDolls {
         BLOCK_ENTITIES.register(bus);
 
         CurseTrigger.register(new SleepTrigger());
+        CurseTrigger.register(new BreakBlockTrigger("chop_tree", 0.05, s -> s.is(BlockTags.LOGS)));
+        CurseTrigger.register(new BreakBlockTrigger("dig_dirt", 0.02, s -> s.is(Tags.Blocks.DIRT)));
+        CurseTrigger.register(new BreakBlockTrigger("mine_stone", 0.01, s -> s.is(Tags.Blocks.STONE)));
+        CurseTrigger.register(new BreakBlockTrigger("mine_ore", 0.05, s -> s.is(Tags.Blocks.ORES)));
+        CurseTrigger.register(new EatTrigger());
+        CurseTrigger.register(new KillMobTrigger());
+        CurseTrigger.register(new BoneMealTrigger());
+        CurseTrigger.register(new JumpTrigger());
+        CurseTrigger.register(new SneakTrigger());
 
         CurseEvent.register(new ShuffleInventoryEvent());
 

@@ -6,6 +6,7 @@ import de.ellpeck.voodoodolls.curses.CurseData;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.common.MinecraftForge;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,6 +23,7 @@ public abstract class CurseTrigger {
     public CurseTrigger(String id, double defaultChance) {
         this.id = id;
         this.defaultChance = defaultChance;
+        MinecraftForge.EVENT_BUS.register(this);
     }
 
     public void setupConfig(ForgeConfigSpec.Builder config) {
@@ -42,6 +44,7 @@ public abstract class CurseTrigger {
             if (curse.trigger == this && player.getRandom().nextFloat() <= this.chance.get())
                 curse.occur();
         }
+        System.out.println("Triggered curse trigger " + this.id);
     }
 
     public static void register(CurseTrigger trigger) {
