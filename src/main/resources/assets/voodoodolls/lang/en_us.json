@@ -8,6 +8,17 @@
     "info.voodoodolls.curse": "%s, caused by %s",
     "info.voodoodolls.cursed_player": "%s is cursed with %s",
     "curse_trigger.voodoodolls.sleep": "Sleeping",
+    "curse_trigger.voodoodolls.chop_tree": "Chopping Wood",
+    "curse_trigger.voodoodolls.dig_dirt": "Digging Dirt",
+    "curse_trigger.voodoodolls.mine_stone": "Mining Stone",
+    "curse_trigger.voodoodolls.mine_ore": "Mining Ores",
+    "curse_trigger.voodoodolls.eat": "Eating Food",
+    "curse_trigger.voodoodolls.kill_mob": "Killing Something",
+    "curse_trigger.voodoodolls.bone_meal": "Fertilizing Crops",
+    "curse_trigger.voodoodolls.jump": "Jumping",
+    "curse_trigger.voodoodolls.sneak": "Crouching",
     "curse_event.voodoodolls.shuffle_inventory": "Inventory Shuffle",
+    "curse_event.voodoodolls.swap_hands": "Hand Swap",
+    "curse_event.voodoodolls.blindness": "Blindness",
     "screen.voodoodolls.voodoo_doll": "Name this Voodoo Doll"
 }
