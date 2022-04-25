@@ -29,10 +29,10 @@ public abstract class CurseEvent {
     public void setupConfig(ForgeConfigSpec.Builder config) {
         this.disabled = config
                 .comment("Whether the " + this.id + " curse event should be disabled.")
-                .define(this.id + "_disabled", false);
+                .define("disabled", false);
         this.badness = config
                 .comment("The badness of the " + this.id + " curse event. Determines what doll tiers can cause it.")
-                .defineEnum(this.id + "_badness", this.defaultBadness);
+                .defineEnum("badness", this.defaultBadness);
     }
 
     public TranslationTextComponent getDisplayName() {

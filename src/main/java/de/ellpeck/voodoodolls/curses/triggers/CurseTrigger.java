@@ -29,7 +29,7 @@ public abstract class CurseTrigger {
     public void setupConfig(ForgeConfigSpec.Builder config) {
         this.chance = config
                 .comment("The chance of the " + this.id + " trigger causing an event when it is triggered. Set to 0 to disable.")
-                .define(this.id + "_chance", this.defaultChance);
+                .define("chance", this.defaultChance);
     }
 
     public TranslationTextComponent getDisplayName() {
@@ -44,7 +44,6 @@ public abstract class CurseTrigger {
             if (curse.trigger == this && player.getRandom().nextFloat() <= this.chance.get())
                 curse.occur();
         }
-        System.out.println("Triggered curse trigger " + this.id);
     }
 
     public static void register(CurseTrigger trigger) {

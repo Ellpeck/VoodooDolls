@@ -2,13 +2,16 @@ package de.ellpeck.voodoodolls;
 
 import de.ellpeck.voodoodolls.VoodooDollBlock.Tier;
 import de.ellpeck.voodoodolls.curses.events.CurseEvent;
+import de.ellpeck.voodoodolls.curses.events.EffectEvent;
 import de.ellpeck.voodoodolls.curses.events.ShuffleInventoryEvent;
+import de.ellpeck.voodoodolls.curses.events.SwapHandsEvent;
 import de.ellpeck.voodoodolls.curses.triggers.*;
 import net.minecraft.block.Block;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ItemStack;
+import net.minecraft.potion.Effects;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tileentity.TileEntityType;
 import net.minecraftforge.common.ForgeConfigSpec;
@@ -72,15 +75,23 @@ public class VoodooDolls {
         CurseTrigger.register(new SneakTrigger());
 
         CurseEvent.register(new ShuffleInventoryEvent());
+        CurseEvent.register(new SwapHandsEvent());
+        CurseEvent.register(new EffectEvent("blindness", CurseEvent.Badness.BAD, Effects.BLINDNESS, 0, 1, 3));
 
         ForgeConfigSpec.Builder config = new ForgeConfigSpec.Builder();
         config.push("triggers");
-        for (CurseTrigger trigger : CurseTrigger.TRIGGERS.values())
+        for (CurseTrigger trigger : CurseTrigger.TRIGGERS.values()) {
+            config.push(trigger.id);
             trigger.setupConfig(config);
+            config.pop();
+        }
         config.pop();
         config.push("curses");
-        for (CurseEvent event : CurseEvent.EVENTS.values())
+        for (CurseEvent event : CurseEvent.EVENTS.values()) {
+            config.push(event.id);
             event.setupConfig(config);
+            config.pop();
+        }
         config.pop();
         ModLoadingContext.get().registerConfig(ModConfig.Type.COMMON, config.build());
     }
