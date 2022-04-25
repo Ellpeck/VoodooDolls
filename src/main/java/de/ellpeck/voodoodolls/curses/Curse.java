@@ -56,7 +56,7 @@ public class Curse implements INBTSerializable<CompoundNBT> {
         this.sourceDoll = nbt.getUUID("source");
         this.playerId = nbt.getUUID("player");
         this.playerName = nbt.getString("player_name");
-        this.isInactive = nbt.getBoolean("doll_id");
+        this.isInactive = nbt.getBoolean("inactive");
     }
 
     public void occur() {
