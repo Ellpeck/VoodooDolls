@@ -63,10 +63,8 @@ public class Curse implements INBTSerializable<CompoundNBT> {
         if (this.isInactive)
             return;
         PlayerEntity player = this.level.getPlayerByUUID(this.playerId);
-        if (player != null) {
-            if (!this.event.disabled.get())
-                this.event.occur(player, this);
-        }
+        if (player != null && this.event.isEnabled())
+            this.event.occur(player, this);
     }
 
     public TranslationTextComponent getDisplayName() {
@@ -74,10 +72,15 @@ public class Curse implements INBTSerializable<CompoundNBT> {
     }
 
     public static Curse create(PlayerEntity player, VoodooDollBlockEntity source) {
-        CurseTrigger[] triggers = CurseTrigger.TRIGGERS.values().toArray(new CurseTrigger[0]);
+        CurseTrigger[] triggers = CurseTrigger.TRIGGERS.values().stream()
+                .filter(CurseTrigger::isEnabled)
+                .toArray(CurseTrigger[]::new);
         if (triggers.length <= 0)
             return null;
-        CurseEvent[] events = CurseEvent.EVENTS.values().stream().filter(e -> source.getTier().isBadnessAllowed.apply(e.badness.get())).toArray(CurseEvent[]::new);
+        CurseEvent[] events = CurseEvent.EVENTS.values().stream()
+                .filter(CurseEvent::isEnabled)
+                .filter(e -> source.getTier().isBadnessAllowed.apply(e.badness.get()))
+                .toArray(CurseEvent[]::new);
         if (events.length <= 0)
             return null;
 

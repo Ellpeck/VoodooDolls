@@ -32,12 +32,16 @@ public abstract class CurseTrigger {
                 .define("chance", this.defaultChance);
     }
 
+    public boolean isEnabled(){
+        return this.chance.get() > 0;
+    }
+
     public TranslationTextComponent getDisplayName() {
         return new TranslationTextComponent("curse_trigger." + VoodooDolls.ID + "." + this.id);
     }
 
     protected void trigger(PlayerEntity player) {
-        if (this.chance.get() <= 0)
+        if (!this.isEnabled())
             return;
         CurseData data = CurseData.get(player.level);
         for (Curse curse : data.getCurses(player.getUUID())) {

@@ -35,6 +35,10 @@ public abstract class CurseEvent {
                 .defineEnum("badness", this.defaultBadness);
     }
 
+    public boolean isEnabled() {
+        return !this.disabled.get();
+    }
+
     public TranslationTextComponent getDisplayName() {
         return new TranslationTextComponent("curse_event." + VoodooDolls.ID + "." + this.id);
     }
