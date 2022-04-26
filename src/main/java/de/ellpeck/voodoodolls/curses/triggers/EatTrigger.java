@@ -9,7 +9,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 public class EatTrigger extends CurseTrigger {
 
     public EatTrigger() {
-        super("eat", 0.05);
+        super("eat");
     }
 
     @SubscribeEvent

@@ -15,28 +15,30 @@ public abstract class CurseEvent {
 
     public final String id;
     public ForgeConfigSpec.ConfigValue<Badness> badness;
-    public ForgeConfigSpec.ConfigValue<Boolean> disabled;
+    public ForgeConfigSpec.ConfigValue<Double> chance;
 
     private final Badness defaultBadness;
+    private final double defaultChance;
 
-    public CurseEvent(String id, Badness defaultBadness) {
+    public CurseEvent(String id, Badness defaultBadness, double defaultChance) {
         this.id = id;
         this.defaultBadness = defaultBadness;
+        this.defaultChance = defaultChance;
     }
 
     public abstract void occur(PlayerEntity player, Curse curse);
 
     public void setupConfig(ForgeConfigSpec.Builder config) {
-        this.disabled = config
-                .comment("Whether the " + this.id + " curse event should be disabled.")
-                .define("disabled", false);
+        this.chance = config
+                .comment("The chance of the " + this.id + " event being triggered. Set to 0 to disable.")
+                .define("chance", this.defaultChance);
         this.badness = config
                 .comment("The badness of the " + this.id + " curse event. Determines what doll tiers can cause it.")
                 .defineEnum("badness", this.defaultBadness);
     }
 
     public boolean isEnabled() {
-        return !this.disabled.get();
+        return this.chance.get() > 0;
     }
 
     public TranslationTextComponent getDisplayName() {

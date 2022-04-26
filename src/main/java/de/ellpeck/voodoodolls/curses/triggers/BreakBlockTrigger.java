@@ -11,8 +11,8 @@ public class BreakBlockTrigger extends CurseTrigger {
 
     private final Function<BlockState, Boolean> isBlockAllowed;
 
-    public BreakBlockTrigger(String id, double defaultChance, Function<BlockState, Boolean> isBlockAllowed) {
-        super(id, defaultChance);
+    public BreakBlockTrigger(String id, Function<BlockState, Boolean> isBlockAllowed) {
+        super(id);
         this.isBlockAllowed = isBlockAllowed;
     }
 

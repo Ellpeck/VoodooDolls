@@ -10,7 +10,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 public class BoneMealTrigger extends CurseTrigger {
 
     public BoneMealTrigger() {
-        super("bone_meal", 0.1);
+        super("bone_meal");
     }
 
     @SubscribeEvent

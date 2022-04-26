@@ -16,24 +16,21 @@ public abstract class CurseTrigger {
     public static final Map<String, CurseTrigger> TRIGGERS = new HashMap<>();
 
     public final String id;
-    public ForgeConfigSpec.ConfigValue<Double> chance;
+    public ForgeConfigSpec.ConfigValue<Boolean> disabled;
 
-    private final double defaultChance;
-
-    public CurseTrigger(String id, double defaultChance) {
+    public CurseTrigger(String id) {
         this.id = id;
-        this.defaultChance = defaultChance;
         MinecraftForge.EVENT_BUS.register(this);
     }
 
     public void setupConfig(ForgeConfigSpec.Builder config) {
-        this.chance = config
-                .comment("The chance of the " + this.id + " trigger causing an event when it is triggered. Set to 0 to disable.")
-                .define("chance", this.defaultChance);
+        this.disabled = config
+                .comment("Whether the " + this.id + " curse trigger should be disabled.")
+                .define("disabled", false);
     }
 
-    public boolean isEnabled(){
-        return this.chance.get() > 0;
+    public boolean isEnabled() {
+        return !this.disabled.get();
     }
 
     public TranslationTextComponent getDisplayName() {
@@ -45,7 +42,7 @@ public abstract class CurseTrigger {
             return;
         CurseData data = CurseData.get(player.level);
         for (Curse curse : data.getCurses(player.getUUID())) {
-            if (curse.trigger == this && player.getRandom().nextFloat() <= this.chance.get())
+            if (curse.trigger == this)
                 curse.occur();
         }
     }

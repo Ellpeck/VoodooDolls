@@ -9,7 +9,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 public class KillMobTrigger extends CurseTrigger {
 
     public KillMobTrigger() {
-        super("kill_mob", 0.05);
+        super("kill_mob");
     }
 
     @SubscribeEvent

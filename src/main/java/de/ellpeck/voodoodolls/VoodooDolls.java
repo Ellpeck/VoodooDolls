@@ -64,10 +64,10 @@ public class VoodooDolls {
         BLOCK_ENTITIES.register(bus);
 
         CurseTrigger.register(new SleepTrigger());
-        CurseTrigger.register(new BreakBlockTrigger("chop_tree", 0.05, s -> s.is(BlockTags.LOGS)));
-        CurseTrigger.register(new BreakBlockTrigger("dig_dirt", 0.02, s -> s.is(Tags.Blocks.DIRT)));
-        CurseTrigger.register(new BreakBlockTrigger("mine_stone", 0.01, s -> s.is(Tags.Blocks.STONE)));
-        CurseTrigger.register(new BreakBlockTrigger("mine_ore", 0.05, s -> s.is(Tags.Blocks.ORES)));
+        CurseTrigger.register(new BreakBlockTrigger("chop_tree", s -> s.is(BlockTags.LOGS)));
+        CurseTrigger.register(new BreakBlockTrigger("dig_dirt", s -> s.is(Tags.Blocks.DIRT)));
+        CurseTrigger.register(new BreakBlockTrigger("mine_stone", s -> s.is(Tags.Blocks.STONE)));
+        CurseTrigger.register(new BreakBlockTrigger("mine_ore", s -> s.is(Tags.Blocks.ORES)));
         CurseTrigger.register(new EatTrigger());
         CurseTrigger.register(new KillMobTrigger());
         CurseTrigger.register(new BoneMealTrigger());
@@ -76,7 +76,7 @@ public class VoodooDolls {
 
         CurseEvent.register(new ShuffleInventoryEvent());
         CurseEvent.register(new SwapHandsEvent());
-        CurseEvent.register(new EffectEvent("blindness", CurseEvent.Badness.BAD, Effects.BLINDNESS, 0, 1, 3));
+        CurseEvent.register(new EffectEvent("blindness", CurseEvent.Badness.BAD, 0.05F, Effects.BLINDNESS, 0, 1, 3));
 
         ForgeConfigSpec.Builder config = new ForgeConfigSpec.Builder();
         config.push("triggers");

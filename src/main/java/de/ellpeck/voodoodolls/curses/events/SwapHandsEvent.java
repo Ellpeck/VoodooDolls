@@ -8,7 +8,7 @@ import net.minecraft.util.Hand;
 public class SwapHandsEvent extends CurseEvent {
 
     public SwapHandsEvent() {
-        super("swap_hands", Badness.BAD);
+        super("swap_hands", Badness.BAD, 0.25F);
     }
 
     @Override

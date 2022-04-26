@@ -63,7 +63,7 @@ public class Curse implements INBTSerializable<CompoundNBT> {
         if (this.isInactive)
             return;
         PlayerEntity player = this.level.getPlayerByUUID(this.playerId);
-        if (player != null && this.event.isEnabled())
+        if (player != null && this.event.isEnabled() && player.getRandom().nextFloat() <= this.event.chance.get())
             this.event.occur(player, this);
     }
 

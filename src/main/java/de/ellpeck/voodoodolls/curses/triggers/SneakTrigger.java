@@ -10,7 +10,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 public class SneakTrigger extends CurseTrigger {
 
     public SneakTrigger() {
-        super("sneak", 0.001);
+        super("sneak");
     }
 
     @SubscribeEvent

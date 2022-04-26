@@ -7,7 +7,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 public class SleepTrigger extends CurseTrigger {
 
     public SleepTrigger() {
-        super("sleep", 0.05);
+        super("sleep");
     }
 
     @SubscribeEvent

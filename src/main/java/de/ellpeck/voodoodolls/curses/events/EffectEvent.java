@@ -17,8 +17,8 @@ public class EffectEvent extends CurseEvent {
     private ForgeConfigSpec.ConfigValue<Integer> minimumMinutes;
     private ForgeConfigSpec.ConfigValue<Integer> maximumMinutes;
 
-    public EffectEvent(String id, Badness defaultBadness, Effect effect, int effectLevel, int defaultMinimumMinutes, int defaultMaximumMinutes) {
-        super(id, defaultBadness);
+    public EffectEvent(String id, Badness defaultBadness, double defaultChance, Effect effect, int effectLevel, int defaultMinimumMinutes, int defaultMaximumMinutes) {
+        super(id, defaultBadness, defaultChance);
         this.effect = effect;
         this.effectLevel = effectLevel;
         this.defaultMinimumMinutes = defaultMinimumMinutes;

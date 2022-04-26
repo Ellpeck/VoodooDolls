@@ -8,7 +8,7 @@ import net.minecraftforge.eventbus.api.SubscribeEvent;
 public class JumpTrigger extends CurseTrigger {
 
     public JumpTrigger() {
-        super("jump", 0.001);
+        super("jump");
     }
 
     @SubscribeEvent
