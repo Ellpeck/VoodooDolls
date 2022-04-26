@@ -20,5 +20,6 @@
     "curse_event.voodoodolls.shuffle_inventory": "Inventory Shuffle",
     "curse_event.voodoodolls.swap_hands": "Hand Swap",
     "curse_event.voodoodolls.blindness": "Blindness",
+    "curse_event.voodoodolls.teleport_to_cave": "Cave Teleport",
     "screen.voodoodolls.voodoo_doll": "Name this Voodoo Doll"
 }
