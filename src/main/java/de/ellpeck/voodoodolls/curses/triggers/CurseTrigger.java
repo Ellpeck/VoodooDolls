@@ -43,7 +43,7 @@ public abstract class CurseTrigger {
         CurseData data = CurseData.get(player.level);
         for (Curse curse : data.getCurses(player.getUUID())) {
             if (curse.trigger == this)
-                curse.occur();
+                curse.occurRandomly();
         }
     }
 

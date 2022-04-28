@@ -76,6 +76,7 @@ public class VoodooDolls {
         CurseEvent.register(new EffectEvent("blindness", CurseEvent.Badness.BAD, 0.05F, Effects.BLINDNESS, 0, 1, 3));
         CurseEvent.register(new TeleportToCaveEvent());
         CurseEvent.register(new ZombieHordeEvent());
+        CurseEvent.register(new ReverseControlsEvent());
 
         ForgeConfigSpec.Builder config = new ForgeConfigSpec.Builder();
         config.push("triggers");

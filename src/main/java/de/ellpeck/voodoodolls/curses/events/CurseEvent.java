@@ -5,6 +5,7 @@ import de.ellpeck.voodoodolls.curses.Curse;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.common.MinecraftForge;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,10 +21,12 @@ public abstract class CurseEvent {
     private final Badness defaultBadness;
     private final double defaultChance;
 
-    public CurseEvent(String id, Badness defaultBadness, double defaultChance) {
+    public CurseEvent(String id, Badness defaultBadness, double defaultChance, boolean subscribeEvents) {
         this.id = id;
         this.defaultBadness = defaultBadness;
         this.defaultChance = defaultChance;
+        if (subscribeEvents)
+            MinecraftForge.EVENT_BUS.register(this);
     }
 
     public abstract void occur(PlayerEntity player, Curse curse);

@@ -1,5 +1,6 @@
 package de.ellpeck.voodoodolls.curses;
 
+import de.ellpeck.voodoodolls.Packets;
 import de.ellpeck.voodoodolls.VoodooDollBlockEntity;
 import de.ellpeck.voodoodolls.VoodooDolls;
 import de.ellpeck.voodoodolls.curses.events.CurseEvent;
@@ -59,12 +60,25 @@ public class Curse implements INBTSerializable<CompoundNBT> {
         this.isInactive = nbt.getBoolean("inactive");
     }
 
-    public void occur() {
-        if (this.isInactive)
+    public void occurRandomly() {
+        if (this.isInactive || !this.event.isEnabled())
             return;
-        PlayerEntity player = this.level.getPlayerByUUID(this.playerId);
-        if (player != null && this.event.isEnabled() && player.getRandom().nextFloat() <= this.event.chance.get())
+        PlayerEntity player = this.getPlayer();
+        if (player != null && player.getRandom().nextFloat() <= this.event.chance.get())
+            this.forceOccur();
+    }
+
+    public void forceOccur() {
+        PlayerEntity player = this.getPlayer();
+        if (player != null) {
             this.event.occur(player, this);
+            if (!player.level.isClientSide)
+                Packets.sendTo(player, new Packets.CurseOccurs(this.sourceDoll));
+        }
+    }
+
+    public PlayerEntity getPlayer() {
+        return this.level.getPlayerByUUID(this.playerId);
     }
 
     public TranslationTextComponent getDisplayName() {

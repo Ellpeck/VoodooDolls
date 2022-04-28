@@ -11,11 +11,13 @@ import java.util.List;
 public class ShuffleInventoryEvent extends CurseEvent {
 
     public ShuffleInventoryEvent() {
-        super("shuffle_inventory", Badness.BAD, 0.1F);
+        super("shuffle_inventory", Badness.BAD, 0.1F, false);
     }
 
     @Override
     public void occur(PlayerEntity player, Curse curse) {
+        if (player.level.isClientSide)
+            return;
         List<ItemStack> items = new ArrayList<>(player.inventory.items);
         Collections.shuffle(items);
         for (int i = 0; i < items.size(); i++)

@@ -17,7 +17,7 @@ public class TeleportToCaveEvent extends CurseEvent {
     private ForgeConfigSpec.ConfigValue<Integer> range;
 
     public TeleportToCaveEvent() {
-        super("teleport_to_cave", Badness.WORSE, 0.05F);
+        super("teleport_to_cave", Badness.WORSE, 0.05F, false);
     }
 
     @Override
@@ -30,6 +30,8 @@ public class TeleportToCaveEvent extends CurseEvent {
 
     @Override
     public void occur(PlayerEntity player, Curse curse) {
+        if (player.level.isClientSide)
+            return;
         List<BlockPos> validPositions = new ArrayList<>();
         for (int y = player.level.getSeaLevel(); y > 0; y--) {
             for (int x = -this.range.get(); x <= this.range.get(); x++) {

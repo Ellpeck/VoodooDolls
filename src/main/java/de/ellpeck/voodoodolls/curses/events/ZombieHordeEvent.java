@@ -22,7 +22,7 @@ public class ZombieHordeEvent extends CurseEvent {
     private ForgeConfigSpec.ConfigValue<Integer> amount;
 
     public ZombieHordeEvent() {
-        super("zombie_horde", Badness.WORSE, 0.05F);
+        super("zombie_horde", Badness.WORSE, 0.05F, false);
     }
 
     @Override
@@ -41,6 +41,8 @@ public class ZombieHordeEvent extends CurseEvent {
 
     @Override
     public void occur(PlayerEntity player, Curse curse) {
+        if (player.level.isClientSide)
+            return;
         List<BlockPos> validPositions = new ArrayList<>();
         for (int y = -this.verticalRange.get(); y <= this.verticalRange.get(); y++) {
             for (int x = -this.horizontalRange.get(); x <= this.horizontalRange.get(); x++) {

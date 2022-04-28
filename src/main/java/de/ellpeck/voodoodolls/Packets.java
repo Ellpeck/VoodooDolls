@@ -1,5 +1,6 @@
 package de.ellpeck.voodoodolls;
 
+import de.ellpeck.voodoodolls.curses.Curse;
 import de.ellpeck.voodoodolls.curses.CurseData;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.PlayerEntity;
@@ -16,6 +17,7 @@ import net.minecraftforge.fml.network.NetworkRegistry;
 import net.minecraftforge.fml.network.PacketDistributor;
 import net.minecraftforge.fml.network.simple.SimpleChannel;
 
+import java.util.UUID;
 import java.util.function.Supplier;
 
 public class Packets {
@@ -27,6 +29,7 @@ public class Packets {
         network = NetworkRegistry.newSimpleChannel(new ResourceLocation(VoodooDolls.ID, "network"), () -> VERSION, VERSION::equals, VERSION::equals);
         network.registerMessage(0, VoodooDollName.class, VoodooDollName::toBytes, VoodooDollName::fromBytes, VoodooDollName::onMessage);
         network.registerMessage(1, Curses.class, Curses::toBytes, Curses::fromBytes, Curses::onMessage);
+        network.registerMessage(2, CurseOccurs.class, CurseOccurs::toBytes, CurseOccurs::fromBytes, CurseOccurs::onMessage);
     }
 
     public static void sendToAll(Object message) {
@@ -100,6 +103,38 @@ public class Packets {
                 public void run() {
                     CurseData data = CurseData.get(Minecraft.getInstance().level);
                     data.deserializeNBT(message.data);
+                }
+            });
+            ctx.get().setPacketHandled(true);
+        }
+    }
+
+    public static class CurseOccurs {
+
+        private final UUID sourceDoll;
+
+        public CurseOccurs(UUID sourceDoll) {
+            this.sourceDoll = sourceDoll;
+        }
+
+        public static CurseOccurs fromBytes(PacketBuffer buf) {
+            return new CurseOccurs(buf.readUUID());
+        }
+
+        public static void toBytes(CurseOccurs packet, PacketBuffer buf) {
+            buf.writeUUID(packet.sourceDoll);
+        }
+
+        @SuppressWarnings("Convert2Lambda")
+        public static void onMessage(CurseOccurs message, Supplier<NetworkEvent.Context> ctx) {
+            ctx.get().enqueueWork(new Runnable() {
+                @Override
+                public void run() {
+                    Minecraft mc = Minecraft.getInstance();
+                    CurseData data = CurseData.get(mc.level);
+                    Curse curse = data.getCurse(message.sourceDoll);
+                    if (curse != null)
+                        curse.forceOccur();
                 }
             });
             ctx.get().setPacketHandled(true);

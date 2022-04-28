@@ -115,7 +115,7 @@ public class VoodooDollBlock extends ContainerBlock {
                 curse.isInactive = true;
                 Packets.sendToAll(CurseData.get(world).getPacket());
 
-                PlayerEntity player = world.getPlayerByUUID(curse.playerId);
+                PlayerEntity player = curse.getPlayer();
                 if (player != null)
                     player.displayClientMessage(new TranslationTextComponent("info." + VoodooDolls.ID + ".curse_removed", doll.getDisplayName(), curse.getDisplayName()).withStyle(TextFormatting.GREEN), false);
             }
