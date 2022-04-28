@@ -1,0 +1,9 @@
+{
+    "required": true,
+    "package": "de.ellpeck.voodoodolls.mixin",
+    "compatibilityLevel": "JAVA_8",
+    "refmap": "voodoodolls.refmap.json",
+    "mixins": [],
+    "client": ["PointOfViewMixin"],
+    "minVersion": "0.8"
+}
