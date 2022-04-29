@@ -79,6 +79,7 @@ public class VoodooDolls {
         CurseEvent.register(new ReverseControlsEvent());
         CurseEvent.register(new TopDownCameraEvent());
         CurseEvent.register(new ExplosionEvent());
+        CurseEvent.register(new TeleportRandomlyEvent());
 
         ForgeConfigSpec.Builder config = new ForgeConfigSpec.Builder();
         config.push("triggers");

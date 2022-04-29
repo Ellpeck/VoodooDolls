@@ -2,8 +2,6 @@ package de.ellpeck.voodoodolls.curses.events;
 
 import de.ellpeck.voodoodolls.curses.Curse;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.shapes.VoxelShape;
@@ -51,12 +49,6 @@ public class TeleportToCaveEvent extends CurseEvent {
         }
         if (validPositions.isEmpty())
             return;
-
-        BlockPos pos = validPositions.get(player.getRandom().nextInt(validPositions.size()));
-        player.teleportTo(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
-
-        player.level.broadcastEntityEvent(player, (byte) 46);
-        player.level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ENDERMAN_TELEPORT, SoundCategory.PLAYERS, 1, 1);
-        player.level.playSound(null, player.xOld, player.yOld, player.zOld, SoundEvents.ENDERMAN_TELEPORT, SoundCategory.PLAYERS, 1, 1);
+        teleportFancy(player, validPositions.get(player.getRandom().nextInt(validPositions.size())));
     }
 }

@@ -3,6 +3,9 @@ package de.ellpeck.voodoodolls.curses.events;
 import de.ellpeck.voodoodolls.VoodooDolls;
 import de.ellpeck.voodoodolls.curses.Curse;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvents;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.MinecraftForge;
@@ -51,6 +54,13 @@ public abstract class CurseEvent {
     public static void register(CurseEvent event) {
         if (EVENTS.put(event.id, event) != null)
             throw new IllegalArgumentException("An event with id " + event.id + " is already registered");
+    }
+
+    protected static void teleportFancy(PlayerEntity player, BlockPos pos) {
+        player.teleportTo(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
+        player.level.broadcastEntityEvent(player, (byte) 46);
+        player.level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ENDERMAN_TELEPORT, SoundCategory.PLAYERS, 1, 1);
+        player.level.playSound(null, player.xOld, player.yOld, player.zOld, SoundEvents.ENDERMAN_TELEPORT, SoundCategory.PLAYERS, 1, 1);
     }
 
     public enum Badness {
