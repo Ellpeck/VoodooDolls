@@ -18,7 +18,9 @@ public class ShuffleInventoryEvent extends CurseEvent {
     public void occur(PlayerEntity player, Curse curse) {
         if (player.level.isClientSide)
             return;
-        List<ItemStack> items = new ArrayList<>(player.inventory.items);
+        List<ItemStack> items = new ArrayList<>();
+        for (int i = 0; i < player.inventory.getContainerSize(); i++)
+            items.add(player.inventory.getItem(i));
         Collections.shuffle(items);
         for (int i = 0; i < items.size(); i++)
             player.inventory.setItem(i, items.get(i));
