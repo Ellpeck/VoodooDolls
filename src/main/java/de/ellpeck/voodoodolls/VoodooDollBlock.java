@@ -20,6 +20,8 @@ import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.BlockRayTraceResult;
+import net.minecraft.util.math.shapes.ISelectionContext;
+import net.minecraft.util.math.shapes.VoxelShape;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
@@ -33,7 +35,7 @@ public class VoodooDollBlock extends ContainerBlock {
     public final Tier tier;
 
     protected VoodooDollBlock(Tier tier) {
-        super(Properties.copy(Blocks.WHITE_WOOL).strength(1.5F));
+        super(Properties.copy(Blocks.WHITE_WOOL).strength(1.5F).noOcclusion());
         this.tier = tier;
     }
 
@@ -136,20 +138,27 @@ public class VoodooDollBlock extends ContainerBlock {
     }
 
     @Override
+    public VoxelShape getShape(BlockState p_220053_1_, IBlockReader p_220053_2_, BlockPos p_220053_3_, ISelectionContext p_220053_4_) {
+        return this.tier.shape;
+    }
+
+    @Override
     protected void createBlockStateDefinition(StateContainer.Builder<Block, BlockState> builder) {
         builder.add(HorizontalBlock.FACING);
     }
 
     public enum Tier {
 
-        ONE(b -> b.allowedInTierOne),
-        TWO(b -> b.allowedInTierTwo),
-        THREE(b -> b.allowedInTierThree);
+        ONE(b -> b.allowedInTierOne, box(1, 0, 1, 15, 12, 15)),
+        TWO(b -> b.allowedInTierTwo, box(1, 0, 1, 15, 14, 15)),
+        THREE(b -> b.allowedInTierThree, box(0, 0, 0, 16, 15, 16));
 
         public final Function<CurseEvent.Badness, Boolean> isBadnessAllowed;
+        public final VoxelShape shape;
 
-        Tier(Function<CurseEvent.Badness, Boolean> isBadnessAllowed) {
+        Tier(Function<CurseEvent.Badness, Boolean> isBadnessAllowed, VoxelShape shape) {
             this.isBadnessAllowed = isBadnessAllowed;
+            this.shape = shape;
         }
     }
 }

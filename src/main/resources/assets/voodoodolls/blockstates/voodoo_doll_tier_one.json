@@ -1,0 +1,19 @@
+{
+	"variants": {
+		"facing=east": {
+			"model": "voodoodolls:block/voodoo_doll_tier_one",
+			"y": 90
+		},
+		"facing=north": {
+			"model": "voodoodolls:block/voodoo_doll_tier_one"
+		},
+		"facing=south": {
+			"model": "voodoodolls:block/voodoo_doll_tier_one",
+			"y": 180
+		},
+		"facing=west": {
+			"model": "voodoodolls:block/voodoo_doll_tier_one",
+			"y": 270
+		}
+	}
+}
