@@ -6,6 +6,7 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import de.ellpeck.voodoodolls.VoodooDollBlock;
 import de.ellpeck.voodoodolls.VoodooDollBlockEntity;
+import net.minecraft.block.HorizontalBlock;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.RenderType;
@@ -16,6 +17,8 @@ import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.tileentity.SkullTileEntity;
+import net.minecraft.util.Direction;
+import net.minecraft.util.math.vector.Vector3f;
 import net.minecraft.util.text.ITextComponent;
 
 import javax.annotation.Nullable;
@@ -36,11 +39,27 @@ public class VoodooDollRenderer extends TileEntityRenderer<VoodooDollBlockEntity
 
     @Override
     public void render(VoodooDollBlockEntity entity, float f, MatrixStack stack, IRenderTypeBuffer buffer, int combinedLight, int combinedOverlay) {
-        render(entity.getTier(), entity.customName, stack, buffer, combinedLight, combinedOverlay);
+        Direction rotation = entity.getBlockState().getValue(HorizontalBlock.FACING);
+        render(entity.getTier(), entity.customName, rotation, stack, buffer, combinedLight, combinedOverlay);
     }
 
-    public static void render(VoodooDollBlock.Tier tier, ITextComponent name, MatrixStack stack, IRenderTypeBuffer buffer, int combinedLight, int combinedOverlay) {
+    public static void render(VoodooDollBlock.Tier tier, ITextComponent name, Direction rotation, MatrixStack stack, IRenderTypeBuffer buffer, int combinedLight, int combinedOverlay) {
         stack.pushPose();
+        stack.translate(0.5, 1.5, 0.5);
+        stack.mulPose(Vector3f.ZP.rotationDegrees(180));
+
+        switch (rotation) {
+            case SOUTH:
+                stack.mulPose(Vector3f.YP.rotationDegrees(180));
+                break;
+            case WEST:
+                stack.mulPose(Vector3f.YP.rotationDegrees(270));
+                break;
+            case EAST:
+                stack.mulPose(Vector3f.YP.rotationDegrees(90));
+                break;
+        }
+
         HeadModel model = MODELS.get(tier);
         GameProfile profile = getGameProfile(name);
         model.renderToBuffer(stack, buffer.getBuffer(getRenderType(profile)), combinedLight, combinedOverlay, 1, 1, 1, 1);
@@ -76,20 +95,24 @@ public class VoodooDollRenderer extends TileEntityRenderer<VoodooDollBlockEntity
 
         public HeadModel(VoodooDollBlock.Tier tier) {
             super(RenderType::entityTranslucent);
-            this.box = new ModelRenderer(this, 0, 0);
-            this.box.setTexSize(64, 64);
+            this.texWidth = 32;
+            this.texHeight = 32;
+            this.box = new ModelRenderer(this);
 
             switch (tier) {
                 case ONE:
-                    this.box.addBox(6, 7, 5, 10 - 6, 11 - 7, 9 - 5);
-                    this.box.zRot = 22.5F;
+                    this.box.setPos(0, 17, -1);
+                    this.setRotation(0, 0, 0.3927F);
+                    this.box.texOffs(0, 0).addBox(-2, -4, -2, 4, 4, 4, 0, false);
                     break;
                 case TWO:
-                    this.box.addBox(6, 9.8436F, 11.21371F, 10 - 6, 13.8436F - 9.8436F, 15.21371F - 11.21371F);
-                    this.box.xRot = 22.5F;
+                    this.box.setPos(0, 14, 5);
+                    this.setRotation(-0.3927F, 0, 0);
+                    this.box.texOffs(0, 0).addBox(-2, -3.8436F, -1.7863F, 4, 4, 4, 0, false);
                     break;
                 case THREE:
-                    this.box.addBox(6, 9.25F, 8.75F, 10 - 6, 13.25F - 9.25F, 12.75F - 8.75F);
+                    this.box.setPos(0, 11, 5);
+                    this.box.texOffs(0, 0).addBox(-2, -2, -2, 4, 4, 4, 0, false);
                     break;
             }
         }
@@ -99,5 +122,10 @@ public class VoodooDollRenderer extends TileEntityRenderer<VoodooDollBlockEntity
             this.box.render(matrixStack, iVertexBuilder, packedLightIn, packedOverlayIn, red, green, blue, alpha);
         }
 
+        private void setRotation(float x, float y, float z) {
+            this.box.xRot = x;
+            this.box.yRot = y;
+            this.box.zRot = z;
+        }
     }
 }

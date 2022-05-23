@@ -12,6 +12,7 @@ import net.minecraft.client.renderer.RenderTypeLookup;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Direction;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.model.data.EmptyModelData;
@@ -22,7 +23,7 @@ public class VoodooDollItemRenderer extends ItemStackTileEntityRenderer {
     public void renderByItem(ItemStack item, ItemCameraTransforms.TransformType transform, MatrixStack stack, IRenderTypeBuffer buffer, int combinedLight, int combinedOverlay) {
         VoodooDollBlock block = (VoodooDollBlock) Block.byItem(item.getItem());
         ITextComponent name = item.hasCustomHoverName() ? item.getHoverName() : null;
-        VoodooDollRenderer.render(block.tier, name, stack, buffer, combinedLight, combinedOverlay);
+        VoodooDollRenderer.render(block.tier, name, Direction.NORTH, stack, buffer, combinedLight, combinedOverlay);
 
         // render the actual voodoo doll on the item too, which isn't possible by default for some reason
         BlockState state = block.defaultBlockState();
