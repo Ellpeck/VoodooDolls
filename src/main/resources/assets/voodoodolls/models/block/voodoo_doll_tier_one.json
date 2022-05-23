@@ -3,8 +3,7 @@
 	"texture_size": [32, 32],
 	"textures": {
 		"particle": "voodoodolls:block/voodoo_doll_tier_one",
-		"base": "voodoodolls:block/voodoo_doll_tier_one",
-		"player": "2021_04_24_generikb-red-belt-17579828"
+		"base": "voodoodolls:block/voodoo_doll_tier_one"
 	},
 	"elements": [
 		{
@@ -70,19 +69,6 @@
 				"west": {"uv": [6, 16, 8, 10], "rotation": 90, "texture": "#base"},
 				"up": {"uv": [6, 10, 8, 16], "texture": "#base"},
 				"down": {"uv": [8, 16, 6, 10], "texture": "#base"}
-			}
-		},
-		{
-			"from": [6, 7, 5],
-			"to": [10, 11, 9],
-			"rotation": {"angle": 22.5, "axis": "z", "origin": [8, 7, 7]},
-			"faces": {
-				"north": {"uv": [2, 2, 4, 4], "texture": "#player"},
-				"east": {"uv": [0, 2, 2, 4], "texture": "#player"},
-				"south": {"uv": [6, 2, 8, 4], "texture": "#player"},
-				"west": {"uv": [4, 2, 6, 4], "texture": "#player"},
-				"up": {"uv": [2, 0, 4, 2], "texture": "#player"},
-				"down": {"uv": [4, 0, 6, 2], "texture": "#player"}
 			}
 		},
 		{

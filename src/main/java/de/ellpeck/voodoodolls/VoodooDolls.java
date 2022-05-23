@@ -3,6 +3,8 @@ package de.ellpeck.voodoodolls;
 import de.ellpeck.voodoodolls.VoodooDollBlock.Tier;
 import de.ellpeck.voodoodolls.curses.events.*;
 import de.ellpeck.voodoodolls.curses.triggers.*;
+import de.ellpeck.voodoodolls.render.RenderingRegistry;
+import de.ellpeck.voodoodolls.render.VoodooDollItemRenderer;
 import net.minecraft.block.Block;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
@@ -11,9 +13,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Effects;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tileentity.TileEntityType;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.RegistryObject;
 import net.minecraftforge.fml.common.Mod;
@@ -45,8 +49,9 @@ public class VoodooDolls {
             .collect(Collectors.toList());
 
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, ID);
-    public static final List<RegistryObject<Item>> BLOCK_ITEMS = BLOCKS.getEntries().stream()
-            .map(b -> ITEMS.<Item>register(b.getId().getPath(), () -> new BlockItem(b.get(), new Item.Properties().tab(ITEM_GROUP))))
+    public static final List<RegistryObject<Item>> VOODOO_DOLL_ITEMS = VOODOO_DOLL_BLOCKS.stream()
+            .map(b -> ITEMS.<Item>register(b.getId().getPath(), () ->
+                    new BlockItem(b.get(), new Item.Properties().tab(ITEM_GROUP).setISTER(() -> VoodooDollItemRenderer::new))))
             .collect(Collectors.toList());
 
     public static final DeferredRegister<TileEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(ForgeRegistries.TILE_ENTITIES, ID);
@@ -59,6 +64,7 @@ public class VoodooDolls {
         BLOCKS.register(bus);
         ITEMS.register(bus);
         BLOCK_ENTITIES.register(bus);
+        DistExecutor.unsafeRunWhenOn(Dist.CLIENT, () -> () -> bus.addListener(RenderingRegistry::setup));
 
         CurseTrigger.register(new SleepTrigger());
         CurseTrigger.register(new BreakBlockTrigger("chop_tree", s -> s.is(BlockTags.LOGS)));
