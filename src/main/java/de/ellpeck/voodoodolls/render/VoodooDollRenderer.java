@@ -55,7 +55,6 @@ public class VoodooDollRenderer extends TileEntityRenderer<VoodooDollBlockEntity
             profile = new GameProfile(null, name.getString());
             profile = SkullTileEntity.updateGameprofile(profile);
             PROFILES.put(name, profile);
-            System.out.println("Updating profile for " + name.getString());
         }
         return profile;
     }
