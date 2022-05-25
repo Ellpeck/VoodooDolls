@@ -7,6 +7,7 @@ import de.ellpeck.voodoodolls.curses.events.CurseEvent;
 import de.ellpeck.voodoodolls.curses.triggers.CurseTrigger;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.common.util.INBTSerializable;
@@ -16,6 +17,7 @@ import java.util.UUID;
 public class Curse implements INBTSerializable<CompoundNBT> {
 
     public UUID sourceDoll;
+    public String dollName;
     public CurseTrigger trigger;
     public CurseEvent event;
     public UUID playerId;
@@ -24,9 +26,10 @@ public class Curse implements INBTSerializable<CompoundNBT> {
 
     private final World level;
 
-    public Curse(World level, UUID sourceDoll, UUID playerId, String playerName, CurseTrigger trigger, CurseEvent event) {
+    public Curse(World level, UUID sourceDoll, String dollName, UUID playerId, String playerName, CurseTrigger trigger, CurseEvent event) {
         this.level = level;
         this.sourceDoll = sourceDoll;
+        this.dollName = dollName;
         this.playerId = playerId;
         this.playerName = playerName;
         this.trigger = trigger;
@@ -44,6 +47,7 @@ public class Curse implements INBTSerializable<CompoundNBT> {
         nbt.putString("trigger", this.trigger.id);
         nbt.putString("event", this.event.id);
         nbt.putUUID("source", this.sourceDoll);
+        nbt.putString("doll_name", this.dollName);
         nbt.putUUID("player", this.playerId);
         nbt.putString("player_name", this.playerName);
         nbt.putBoolean("inactive", this.isInactive);
@@ -55,6 +59,7 @@ public class Curse implements INBTSerializable<CompoundNBT> {
         this.trigger = CurseTrigger.TRIGGERS.get(nbt.getString("trigger"));
         this.event = CurseEvent.EVENTS.get(nbt.getString("event"));
         this.sourceDoll = nbt.getUUID("source");
+        this.dollName = nbt.getString("doll_name");
         this.playerId = nbt.getUUID("player");
         this.playerName = nbt.getString("player_name");
         this.isInactive = nbt.getBoolean("inactive");
@@ -72,8 +77,10 @@ public class Curse implements INBTSerializable<CompoundNBT> {
         PlayerEntity player = this.getPlayer();
         if (player != null) {
             this.event.occur(player, this);
-            if (!player.level.isClientSide)
+            if (!player.level.isClientSide) {
                 Packets.sendTo(player, new Packets.CurseOccurs(this.sourceDoll));
+                player.displayClientMessage(new TranslationTextComponent("info." + VoodooDolls.ID + ".curse_triggered", this.dollName, this.event.getDisplayName()).withStyle(TextFormatting.RED), false);
+            }
         }
     }
 
@@ -100,6 +107,6 @@ public class Curse implements INBTSerializable<CompoundNBT> {
 
         CurseEvent event = events[player.getRandom().nextInt(events.length)];
         CurseTrigger trigger = triggers[player.getRandom().nextInt(triggers.length)];
-        return new Curse(player.level, source.dollId, player.getUUID(), player.getGameProfile().getName(), trigger, event);
+        return new Curse(player.level, source.dollId, source.getName().getString(), player.getUUID(), player.getGameProfile().getName(), trigger, event);
     }
 }

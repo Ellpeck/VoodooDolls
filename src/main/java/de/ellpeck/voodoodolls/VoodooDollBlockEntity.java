@@ -79,4 +79,11 @@ public class VoodooDollBlockEntity extends TileEntity implements INameable {
     public Curse getCurse() {
         return CurseData.get(this.level).getCurse(this.dollId);
     }
+
+    public void setCustomName(ITextComponent name) {
+        this.customName = name;
+        Curse curse = this.getCurse();
+        if (curse != null)
+            curse.dollName = this.getName().getString();
+    }
 }

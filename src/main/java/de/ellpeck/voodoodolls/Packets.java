@@ -71,7 +71,7 @@ public class Packets {
                     PlayerEntity player = ctx.get().getSender();
                     TileEntity entity = player.level.getBlockEntity(message.pos);
                     if (entity instanceof VoodooDollBlockEntity) {
-                        ((VoodooDollBlockEntity) entity).customName = new StringTextComponent(message.name);
+                        ((VoodooDollBlockEntity) entity).setCustomName(new StringTextComponent(message.name));
                         entity.getLevel().sendBlockUpdated(entity.getBlockPos(), entity.getBlockState(), entity.getBlockState(), 3);
                     }
                 }

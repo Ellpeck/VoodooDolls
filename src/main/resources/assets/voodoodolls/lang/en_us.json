@@ -7,7 +7,7 @@
     "info.voodoodolls.curse_removed": "%s was destroyed, and the curse %s has been lifted!",
     "info.voodoodolls.curse": "%s, caused by %s",
     "info.voodoodolls.cursed_player": "%s is cursed with %s",
-    "info.voodoodolls.reverse_controls_start": "You're starting to feel dizzy...",
+    "info.voodoodolls.curse_triggered": "%s inflicted you with %s!",
     "curse_trigger.voodoodolls.sleep": "Sleeping",
     "curse_trigger.voodoodolls.chop_tree": "Chopping Wood",
     "curse_trigger.voodoodolls.dig_dirt": "Digging Dirt",

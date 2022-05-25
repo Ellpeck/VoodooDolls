@@ -72,7 +72,7 @@ public class VoodooDollBlock extends ContainerBlock {
             VoodooDollBlockEntity doll = (VoodooDollBlockEntity) entity;
 
             if (stack.hasCustomHoverName())
-                doll.customName = stack.getHoverName();
+                doll.setCustomName(stack.getHoverName());
 
             if (!placer.level.isClientSide && placer instanceof PlayerEntity) {
                 PlayerEntity player = (PlayerEntity) placer;
