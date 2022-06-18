@@ -10,12 +10,12 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(PointOfView.class)
 public class PointOfViewMixin {
 
-    @Inject(method = "isFirstPerson", at = @At("RETURN"), cancellable = true)
+    @Inject(method = "isFirstPerson()Z", at = @At("RETURN"), cancellable = true)
     private void isFirstPerson(CallbackInfoReturnable<Boolean> callback) {
         callback.setReturnValue(callback.getReturnValue() && !TopDownCameraEvent.isActive());
     }
 
-    @Inject(method = "isMirrored", at = @At("RETURN"), cancellable = true)
+    @Inject(method = "isMirrored()Z", at = @At("RETURN"), cancellable = true)
     private void isFrontView(CallbackInfoReturnable<Boolean> callback) {
         callback.setReturnValue(callback.getReturnValue() && !TopDownCameraEvent.isActive());
     }
