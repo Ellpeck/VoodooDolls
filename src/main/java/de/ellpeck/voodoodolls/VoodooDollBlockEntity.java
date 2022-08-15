@@ -88,12 +88,12 @@ public class VoodooDollBlockEntity extends BlockEntity implements Nameable {
     public static GameProfile getProfile(Component name) {
         if (name == null)
             return null;
-        var profile = PROFILES.get(name);
+        var profile = VoodooDollBlockEntity.PROFILES.get(name);
         if (profile == null) {
             profile = new GameProfile(null, name.getString());
             // we put it in before it's updated so that we don't enqueue the update multiple times
-            PROFILES.put(name, profile);
-            SkullBlockEntity.updateGameprofile(profile, p -> PROFILES.put(name, p));
+            VoodooDollBlockEntity.PROFILES.put(name, profile);
+            SkullBlockEntity.updateGameprofile(profile, p -> VoodooDollBlockEntity.PROFILES.put(name, p));
         }
         return profile;
     }
