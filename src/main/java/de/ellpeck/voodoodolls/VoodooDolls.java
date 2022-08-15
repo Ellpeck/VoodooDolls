@@ -6,7 +6,6 @@ import de.ellpeck.voodoodolls.curses.triggers.*;
 import de.ellpeck.voodoodolls.render.RenderingRegistry;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -15,7 +14,6 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.Tags;
-import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.DistExecutor;
 import net.minecraftforge.fml.ModLoadingContext;
 import net.minecraftforge.fml.common.Mod;
@@ -50,7 +48,7 @@ public class VoodooDolls {
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, VoodooDolls.ID);
     public static final List<RegistryObject<Item>> VOODOO_DOLL_ITEMS = VoodooDolls.VOODOO_DOLL_BLOCKS.stream()
             .map(b -> VoodooDolls.ITEMS.<Item>register(b.getId().getPath(), () ->
-                    new BlockItem(b.get(), new Item.Properties().tab(VoodooDolls.CREATIVE_TAB))))
+                    new VoodooDollItem(b.get(), new Item.Properties().tab(VoodooDolls.CREATIVE_TAB))))
             .collect(Collectors.toList());
 
     public static final DeferredRegister<BlockEntityType<?>> BLOCK_ENTITIES = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITIES, VoodooDolls.ID);

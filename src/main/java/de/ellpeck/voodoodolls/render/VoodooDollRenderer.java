@@ -38,7 +38,8 @@ public class VoodooDollRenderer implements BlockEntityRenderer<VoodooDollBlockEn
     @Override
     public void render(VoodooDollBlockEntity entity, float f, PoseStack stack, MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
         var rotation = entity.getBlockState().getValue(HorizontalDirectionalBlock.FACING);
-        VoodooDollRenderer.render(entity.getTier(), entity.gameProfile, rotation, stack, buffer, combinedLight, combinedOverlay);
+        var profile = VoodooDollBlockEntity.getProfile(entity.getCustomName());
+        VoodooDollRenderer.render(entity.getTier(), profile, rotation, stack, buffer, combinedLight, combinedOverlay);
     }
 
     public static void render(VoodooDollBlock.Tier tier, GameProfile profile, Direction rotation, PoseStack stack, MultiBufferSource buffer, int combinedLight, int combinedOverlay) {
