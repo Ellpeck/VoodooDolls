@@ -1,10 +1,8 @@
 package de.ellpeck.voodoodolls.curses.events;
 
 import de.ellpeck.voodoodolls.curses.Curse;
-import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraft.world.phys.AABB;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 public class TeleportRandomlyEvent extends CurseEvent {
@@ -24,6 +22,7 @@ public class TeleportRandomlyEvent extends CurseEvent {
 
         var checkRadius = 16;
         for (var x = -checkRadius; x <= checkRadius; x++) {
+            z:
             for (var z = -checkRadius; z <= checkRadius; z++) {
                 var offset = goalPos.offset(x, 0, z);
                 // load the chunk at the location because getHeightmapPos doesn't force-load it
@@ -35,7 +34,7 @@ public class TeleportRandomlyEvent extends CurseEvent {
                 var box = player.getType().getDimensions().makeBoundingBox(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
                 for (var collision : player.level.getBlockCollisions(player, box)) {
                     if (!collision.isEmpty())
-                        continue;
+                        continue z;
                 }
                 CurseEvent.teleportFancy(player, pos);
                 return;

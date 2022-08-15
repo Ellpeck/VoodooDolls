@@ -3,7 +3,6 @@ package de.ellpeck.voodoodolls.curses.events;
 import de.ellpeck.voodoodolls.curses.Curse;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.phys.AABB;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 import java.util.ArrayList;
@@ -32,6 +31,7 @@ public class TeleportToCaveEvent extends CurseEvent {
         List<BlockPos> validPositions = new ArrayList<>();
         for (var y = player.level.getSeaLevel(); y > 0; y--) {
             for (var x = -this.range.get(); x <= this.range.get(); x++) {
+                z:
                 for (var z = -this.range.get(); z <= this.range.get(); z++) {
                     var pos = new BlockPos(player.getX() + x, y, player.getZ() + z);
                     if (player.level.canSeeSky(pos))
@@ -42,7 +42,7 @@ public class TeleportToCaveEvent extends CurseEvent {
                     var box = player.getType().getDimensions().makeBoundingBox(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
                     for (var collision : player.level.getBlockCollisions(player, box)) {
                         if (!collision.isEmpty())
-                            continue;
+                            continue z;
                     }
                     validPositions.add(pos);
                 }
