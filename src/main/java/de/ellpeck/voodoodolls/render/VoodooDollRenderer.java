@@ -58,8 +58,7 @@ public class VoodooDollRenderer implements BlockEntityRenderer<VoodooDollBlockEn
                 break;
         }
 
-        if (profile != null)
-            VoodooDollRenderer.MODELS.get(tier).renderToBuffer(stack, buffer.getBuffer(VoodooDollRenderer.getRenderType(profile)), combinedLight, combinedOverlay, 1, 1, 1, 1);
+        VoodooDollRenderer.MODELS.get(tier).renderToBuffer(stack, buffer.getBuffer(VoodooDollRenderer.getRenderType(profile)), combinedLight, combinedOverlay, 1, 1, 1, 1);
         stack.popPose();
     }
 

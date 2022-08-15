@@ -2,7 +2,6 @@ package de.ellpeck.voodoodolls;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import de.ellpeck.voodoodolls.curses.Curse;
 import joptsimple.internal.Strings;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
@@ -11,10 +10,7 @@ import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.FormattedCharSequence;
 import net.minecraftforge.client.gui.widget.ExtendedButton;
-
-import java.util.List;
 
 public class VoodooDollScreen extends Screen {
 
@@ -35,12 +31,12 @@ public class VoodooDollScreen extends Screen {
     protected void init() {
         var left = (this.width - VoodooDollScreen.WIDTH) / 2;
         var top = (this.height - VoodooDollScreen.HEIGHT) / 2;
-        this.textField = this.addWidget(new EditBox(this.font, left + 8, top + 55, 161, 9, null, this.title));
+        this.textField = this.addRenderableWidget(new EditBox(this.font, left + 8, top + 55, 161, 9, null, this.title));
         this.textField.setMaxLength(50);
         this.textField.setBordered(false);
         this.textField.setTextColor(16777215);
         this.textField.setValue(this.doll.getName().getString());
-        this.okButton = this.addWidget(new ExtendedButton(left + (VoodooDollScreen.WIDTH - 50) / 2, top + 68, 50, 20, new TranslatableComponent("gui.ok"), b -> {
+        this.okButton = this.addRenderableWidget(new ExtendedButton(left + (VoodooDollScreen.WIDTH - 50) / 2, top + 68, 50, 20, new TranslatableComponent("gui.ok"), b -> {
             Packets.sendToServer(new Packets.VoodooDollName(this.doll.getBlockPos(), this.textField.getValue()));
             this.minecraft.setScreen(null);
         }));
@@ -65,7 +61,6 @@ public class VoodooDollScreen extends Screen {
         }
 
         this.font.draw(stack, this.title, left + 8, top + 43, 4210752);
-        this.textField.render(stack, x, y, pt);
         super.render(stack, x, y, pt);
     }
 
