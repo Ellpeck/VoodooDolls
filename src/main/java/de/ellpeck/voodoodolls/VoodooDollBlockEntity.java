@@ -94,7 +94,6 @@ public class VoodooDollBlockEntity extends BlockEntity implements Nameable {
             // we put it in before it's updated so that we don't enqueue the update multiple times
             PROFILES.put(name, profile);
             SkullBlockEntity.updateGameprofile(profile, p -> PROFILES.put(name, p));
-            System.out.println("Searching profile for " + name);
         }
         return profile;
     }
