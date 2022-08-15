@@ -1,9 +1,9 @@
 package de.ellpeck.voodoodolls.curses.events;
 
 import de.ellpeck.voodoodolls.curses.Curse;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Hand;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 
 public class SwapHandsEvent extends CurseEvent {
 
@@ -12,12 +12,12 @@ public class SwapHandsEvent extends CurseEvent {
     }
 
     @Override
-    public void occur(PlayerEntity player, Curse curse) {
+    public void occur(Player player, Curse curse) {
         if (player.level.isClientSide)
             return;
-        ItemStack main = player.getItemInHand(Hand.MAIN_HAND);
-        ItemStack off = player.getItemInHand(Hand.OFF_HAND);
-        player.setItemInHand(Hand.MAIN_HAND, off);
-        player.setItemInHand(Hand.OFF_HAND, main);
+        var main = player.getItemInHand(InteractionHand.MAIN_HAND);
+        var off = player.getItemInHand(InteractionHand.OFF_HAND);
+        player.setItemInHand(InteractionHand.MAIN_HAND, off);
+        player.setItemInHand(InteractionHand.OFF_HAND, main);
     }
 }

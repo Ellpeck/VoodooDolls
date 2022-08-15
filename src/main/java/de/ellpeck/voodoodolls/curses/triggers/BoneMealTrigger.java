@@ -1,9 +1,9 @@
 package de.ellpeck.voodoodolls.curses.triggers;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.IGrowable;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.BonemealableBlock;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.event.entity.player.BonemealEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -15,11 +15,11 @@ public class BoneMealTrigger extends CurseTrigger {
 
     @SubscribeEvent
     public void onBonemeal(BonemealEvent event) {
-        PlayerEntity player = event.getPlayer();
+        var player = event.getPlayer();
         if (player != null && !player.level.isClientSide) {
-            BlockState state = event.getBlock();
-            Block block = state.getBlock();
-            if (block instanceof IGrowable && ((IGrowable) block).isValidBonemealTarget(player.level, event.getPos(), state, player.level.isClientSide))
+            var state = event.getBlock();
+            var block = state.getBlock();
+            if (block instanceof BonemealableBlock bonemealable && bonemealable.isValidBonemealTarget(player.level, event.getPos(), state, player.level.isClientSide))
                 this.trigger(player);
         }
     }

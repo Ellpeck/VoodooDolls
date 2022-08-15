@@ -1,8 +1,8 @@
 package de.ellpeck.voodoodolls.curses.triggers;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.DamageSource;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -14,9 +14,9 @@ public class KillMobTrigger extends CurseTrigger {
 
     @SubscribeEvent
     public void onLivingDeath(LivingDeathEvent event) {
-        DamageSource source = event.getSource();
-        Entity killer = source.getEntity();
-        if (killer != null && !killer.level.isClientSide && killer instanceof PlayerEntity)
-            this.trigger((PlayerEntity) killer);
+        var source = event.getSource();
+        var killer = source.getEntity();
+        if (killer != null && !killer.level.isClientSide && killer instanceof Player player)
+            this.trigger(player);
     }
 }

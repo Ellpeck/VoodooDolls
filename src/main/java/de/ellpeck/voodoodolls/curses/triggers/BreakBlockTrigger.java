@@ -1,7 +1,7 @@
 package de.ellpeck.voodoodolls.curses.triggers;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.event.world.BlockEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -18,7 +18,7 @@ public class BreakBlockTrigger extends CurseTrigger {
 
     @SubscribeEvent
     public void onBlockBreak(BlockEvent.BreakEvent event) {
-        PlayerEntity player = event.getPlayer();
+        var player = event.getPlayer();
         if (player != null && !player.level.isClientSide && this.isBlockAllowed.apply(event.getState()))
             this.trigger(player);
     }

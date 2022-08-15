@@ -3,8 +3,8 @@ package de.ellpeck.voodoodolls.curses.triggers;
 import de.ellpeck.voodoodolls.VoodooDolls;
 import de.ellpeck.voodoodolls.curses.Curse;
 import de.ellpeck.voodoodolls.curses.CurseData;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.MinecraftForge;
 
@@ -33,22 +33,22 @@ public abstract class CurseTrigger {
         return !this.disabled.get();
     }
 
-    public TranslationTextComponent getDisplayName() {
-        return new TranslationTextComponent("curse_trigger." + VoodooDolls.ID + "." + this.id);
+    public TranslatableComponent getDisplayName() {
+        return new TranslatableComponent("curse_trigger." + VoodooDolls.ID + "." + this.id);
     }
 
-    protected void trigger(PlayerEntity player) {
+    protected void trigger(Player player) {
         if (!this.isEnabled())
             return;
-        CurseData data = CurseData.get(player.level);
-        for (Curse curse : data.getCurses(player.getUUID())) {
+        var data = CurseData.get(player.level);
+        for (var curse : data.getCurses(player.getUUID())) {
             if (curse.trigger == this)
-                curse.occurRandomly();
+                curse.occurRandomly(player.level);
         }
     }
 
     public static void register(CurseTrigger trigger) {
-        if (TRIGGERS.put(trigger.id, trigger) != null)
+        if (CurseTrigger.TRIGGERS.put(trigger.id, trigger) != null)
             throw new IllegalArgumentException("A trigger with id " + trigger.id + " is already registered");
     }
 }

@@ -1,7 +1,7 @@
 package de.ellpeck.voodoodolls.curses.events;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 public abstract class TimedEvent extends CurseEvent {
@@ -29,8 +29,8 @@ public abstract class TimedEvent extends CurseEvent {
                 .define("maximum_minutes", this.defaultMaximumMinutes);
     }
 
-    protected double getRandomMinutes(PlayerEntity player) {
-        return MathHelper.nextDouble(player.getRandom(), this.minimumMinutes.get(), this.maximumMinutes.get());
+    protected double getRandomMinutes(Player player) {
+        return Mth.nextDouble(player.getRandom(), this.minimumMinutes.get(), this.maximumMinutes.get());
 
     }
 }

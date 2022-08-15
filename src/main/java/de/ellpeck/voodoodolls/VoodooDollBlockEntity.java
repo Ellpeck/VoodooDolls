@@ -1,75 +1,69 @@
 package de.ellpeck.voodoodolls;
 
+import com.mojang.authlib.GameProfile;
 import de.ellpeck.voodoodolls.curses.Curse;
 import de.ellpeck.voodoodolls.curses.CurseData;
-import net.minecraft.block.BlockState;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.NetworkManager;
-import net.minecraft.network.play.server.SUpdateTileEntityPacket;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.INameable;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraftforge.common.util.Constants;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.Packet;
+import net.minecraft.network.protocol.game.ClientGamePacketListener;
+import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.world.Nameable;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.SkullBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 
 import javax.annotation.Nullable;
 import java.util.UUID;
 
-public class VoodooDollBlockEntity extends TileEntity implements INameable {
+public class VoodooDollBlockEntity extends BlockEntity implements Nameable {
 
-    public ITextComponent customName;
+    public Component customName;
+    public GameProfile gameProfile;
     public UUID dollId = UUID.randomUUID();
 
-    public VoodooDollBlockEntity() {
-        super(VoodooDolls.VOODOO_DOLL_BLOCK_ENTITY.get());
+    public VoodooDollBlockEntity(BlockPos pos, BlockState state) {
+        super(VoodooDolls.VOODOO_DOLL_BLOCK_ENTITY.get(), pos, state);
     }
 
     @Override
-    public void load(BlockState state, CompoundNBT nbt) {
-        super.load(state, nbt);
-        if (nbt.contains("CustomName", Constants.NBT.TAG_STRING))
-            this.customName = ITextComponent.Serializer.fromJson(nbt.getString("CustomName"));
+    public void load(CompoundTag nbt) {
+        super.load(nbt);
+        if (nbt.contains("CustomName", Tag.TAG_STRING))
+            this.setCustomName(Component.Serializer.fromJson(nbt.getString("CustomName")), false);
         this.dollId = nbt.getUUID("doll_id");
     }
 
     @Override
-    public CompoundNBT save(CompoundNBT nbt) {
-        super.save(nbt);
+    public void saveAdditional(CompoundTag nbt) {
+        super.saveAdditional(nbt);
         if (this.customName != null)
-            nbt.putString("CustomName", ITextComponent.Serializer.toJson(this.customName));
+            nbt.putString("CustomName", Component.Serializer.toJson(this.customName));
         nbt.putUUID("doll_id", this.dollId);
-        return nbt;
     }
 
     @Override
-    public ITextComponent getName() {
+    public Component getName() {
         return this.customName != null ? this.customName : this.getBlockState().getBlock().getName();
     }
 
     @Override
     @Nullable
-    public ITextComponent getCustomName() {
+    public Component getCustomName() {
         return this.customName;
     }
 
     @Nullable
     @Override
-    public SUpdateTileEntityPacket getUpdatePacket() {
-        return new SUpdateTileEntityPacket(this.worldPosition, -1, this.getUpdateTag());
+    public Packet<ClientGamePacketListener> getUpdatePacket() {
+        return ClientboundBlockEntityDataPacket.create(this);
     }
 
     @Override
-    public void onDataPacket(NetworkManager net, SUpdateTileEntityPacket pkt) {
-        this.load(this.getBlockState(), pkt.getTag());
-    }
-
-    @Override
-    public CompoundNBT getUpdateTag() {
-        return this.save(new CompoundNBT());
-    }
-
-    @Override
-    public void handleUpdateTag(BlockState state, CompoundNBT tag) {
-        this.load(state, tag);
+    public CompoundTag getUpdateTag() {
+        return this.saveWithoutMetadata();
     }
 
     public VoodooDollBlock.Tier getTier() {
@@ -80,10 +74,16 @@ public class VoodooDollBlockEntity extends TileEntity implements INameable {
         return CurseData.get(this.level).getCurse(this.dollId);
     }
 
-    public void setCustomName(ITextComponent name) {
+    public void setCustomName(Component name, boolean updateCurse) {
         this.customName = name;
-        Curse curse = this.getCurse();
-        if (curse != null)
-            curse.dollName = this.getName().getString();
+        if (this.gameProfile == null)
+            this.gameProfile = new GameProfile(null, name.getString());
+        SkullBlockEntity.updateGameprofile(this.gameProfile, p -> this.gameProfile = p);
+
+        if (updateCurse) {
+            var curse = this.getCurse();
+            if (curse != null)
+                curse.dollName = this.getName().getString();
+        }
     }
 }

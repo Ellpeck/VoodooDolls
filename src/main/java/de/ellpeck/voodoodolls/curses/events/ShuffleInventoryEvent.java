@@ -1,8 +1,8 @@
 package de.ellpeck.voodoodolls.curses.events;
 
 import de.ellpeck.voodoodolls.curses.Curse;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,14 +15,14 @@ public class ShuffleInventoryEvent extends CurseEvent {
     }
 
     @Override
-    public void occur(PlayerEntity player, Curse curse) {
+    public void occur(Player player, Curse curse) {
         if (player.level.isClientSide)
             return;
         List<ItemStack> items = new ArrayList<>();
-        for (int i = 0; i < player.inventory.getContainerSize(); i++)
-            items.add(player.inventory.getItem(i));
+        for (var i = 0; i < player.getInventory().getContainerSize(); i++)
+            items.add(player.getInventory().getItem(i));
         Collections.shuffle(items);
-        for (int i = 0; i < items.size(); i++)
-            player.inventory.setItem(i, items.get(i));
+        for (var i = 0; i < items.size(); i++)
+            player.getInventory().setItem(i, items.get(i));
     }
 }

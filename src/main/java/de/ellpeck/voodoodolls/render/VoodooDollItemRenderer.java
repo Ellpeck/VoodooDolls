@@ -1,22 +1,7 @@
 package de.ellpeck.voodoodolls.render;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import de.ellpeck.voodoodolls.VoodooDollBlock;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BlockModelRenderer;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.RenderTypeLookup;
-import net.minecraft.client.renderer.model.ItemCameraTransforms;
-import net.minecraft.client.renderer.tileentity.ItemStackTileEntityRenderer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Direction;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraftforge.client.ForgeHooksClient;
-import net.minecraftforge.client.model.data.EmptyModelData;
-
+// TODO voodoo doll item renderer
+/*
 public class VoodooDollItemRenderer extends ItemStackTileEntityRenderer {
 
     @Override
@@ -40,3 +25,4 @@ public class VoodooDollItemRenderer extends ItemStackTileEntityRenderer {
         stack.popPose();
     }
 }
+*/

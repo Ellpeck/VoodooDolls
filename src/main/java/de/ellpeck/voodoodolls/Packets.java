@@ -3,19 +3,19 @@ package de.ellpeck.voodoodolls;
 import de.ellpeck.voodoodolls.curses.Curse;
 import de.ellpeck.voodoodolls.curses.CurseData;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.StringTextComponent;
+import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
-import net.minecraftforge.fml.network.NetworkEvent;
-import net.minecraftforge.fml.network.NetworkRegistry;
-import net.minecraftforge.fml.network.PacketDistributor;
-import net.minecraftforge.fml.network.simple.SimpleChannel;
+import net.minecraftforge.network.NetworkEvent;
+import net.minecraftforge.network.NetworkRegistry;
+import net.minecraftforge.network.PacketDistributor;
+import net.minecraftforge.network.simple.SimpleChannel;
 
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -26,22 +26,22 @@ public class Packets {
     private static SimpleChannel network;
 
     public static void setup(FMLCommonSetupEvent ignoredEvent) {
-        network = NetworkRegistry.newSimpleChannel(new ResourceLocation(VoodooDolls.ID, "network"), () -> VERSION, VERSION::equals, VERSION::equals);
-        network.registerMessage(0, VoodooDollName.class, VoodooDollName::toBytes, VoodooDollName::fromBytes, VoodooDollName::onMessage);
-        network.registerMessage(1, Curses.class, Curses::toBytes, Curses::fromBytes, Curses::onMessage);
-        network.registerMessage(2, CurseOccurs.class, CurseOccurs::toBytes, CurseOccurs::fromBytes, CurseOccurs::onMessage);
+        Packets.network = NetworkRegistry.newSimpleChannel(new ResourceLocation(VoodooDolls.ID, "network"), () -> Packets.VERSION, Packets.VERSION::equals, Packets.VERSION::equals);
+        Packets.network.registerMessage(0, VoodooDollName.class, VoodooDollName::toBytes, VoodooDollName::fromBytes, VoodooDollName::onMessage);
+        Packets.network.registerMessage(1, Curses.class, Curses::toBytes, Curses::fromBytes, Curses::onMessage);
+        Packets.network.registerMessage(2, CurseOccurs.class, CurseOccurs::toBytes, CurseOccurs::fromBytes, CurseOccurs::onMessage);
     }
 
     public static void sendToAll(Object message) {
-        network.send(PacketDistributor.ALL.noArg(), message);
+        Packets.network.send(PacketDistributor.ALL.noArg(), message);
     }
 
-    public static void sendTo(PlayerEntity player, Object message) {
-        network.send(PacketDistributor.PLAYER.with(() -> (ServerPlayerEntity) player), message);
+    public static void sendTo(Player player, Object message) {
+        Packets.network.send(PacketDistributor.PLAYER.with(() -> (ServerPlayer) player), message);
     }
 
     public static void sendToServer(Object message) {
-        network.send(PacketDistributor.SERVER.noArg(), message);
+        Packets.network.send(PacketDistributor.SERVER.noArg(), message);
     }
 
     public static class VoodooDollName {
@@ -54,11 +54,11 @@ public class Packets {
             this.name = name;
         }
 
-        public static VoodooDollName fromBytes(PacketBuffer buf) {
+        public static VoodooDollName fromBytes(FriendlyByteBuf buf) {
             return new VoodooDollName(buf.readBlockPos(), buf.readUtf());
         }
 
-        public static void toBytes(VoodooDollName packet, PacketBuffer buf) {
+        public static void toBytes(VoodooDollName packet, FriendlyByteBuf buf) {
             buf.writeBlockPos(packet.pos);
             buf.writeUtf(packet.name);
         }
@@ -68,10 +68,10 @@ public class Packets {
             ctx.get().enqueueWork(new Runnable() {
                 @Override
                 public void run() {
-                    PlayerEntity player = ctx.get().getSender();
-                    TileEntity entity = player.level.getBlockEntity(message.pos);
+                    Player player = ctx.get().getSender();
+                    var entity = player.level.getBlockEntity(message.pos);
                     if (entity instanceof VoodooDollBlockEntity) {
-                        ((VoodooDollBlockEntity) entity).setCustomName(new StringTextComponent(message.name));
+                        ((VoodooDollBlockEntity) entity).setCustomName(new TextComponent(message.name), true);
                         entity.getLevel().sendBlockUpdated(entity.getBlockPos(), entity.getBlockState(), entity.getBlockState(), 3);
                     }
                 }
@@ -82,17 +82,17 @@ public class Packets {
 
     public static class Curses {
 
-        private final CompoundNBT data;
+        private final CompoundTag data;
 
-        public Curses(CompoundNBT data) {
+        public Curses(CompoundTag data) {
             this.data = data;
         }
 
-        public static Curses fromBytes(PacketBuffer buf) {
+        public static Curses fromBytes(FriendlyByteBuf buf) {
             return new Curses(buf.readNbt());
         }
 
-        public static void toBytes(Curses packet, PacketBuffer buf) {
+        public static void toBytes(Curses packet, FriendlyByteBuf buf) {
             buf.writeNbt(packet.data);
         }
 
@@ -101,8 +101,8 @@ public class Packets {
             ctx.get().enqueueWork(new Runnable() {
                 @Override
                 public void run() {
-                    CurseData data = CurseData.get(Minecraft.getInstance().level);
-                    data.deserializeNBT(message.data);
+                    var data = CurseData.get(Minecraft.getInstance().level);
+                    data.load(message.data);
                 }
             });
             ctx.get().setPacketHandled(true);
@@ -117,11 +117,11 @@ public class Packets {
             this.sourceDoll = sourceDoll;
         }
 
-        public static CurseOccurs fromBytes(PacketBuffer buf) {
+        public static CurseOccurs fromBytes(FriendlyByteBuf buf) {
             return new CurseOccurs(buf.readUUID());
         }
 
-        public static void toBytes(CurseOccurs packet, PacketBuffer buf) {
+        public static void toBytes(CurseOccurs packet, FriendlyByteBuf buf) {
             buf.writeUUID(packet.sourceDoll);
         }
 
@@ -130,11 +130,11 @@ public class Packets {
             ctx.get().enqueueWork(new Runnable() {
                 @Override
                 public void run() {
-                    Minecraft mc = Minecraft.getInstance();
-                    CurseData data = CurseData.get(mc.level);
-                    Curse curse = data.getCurse(message.sourceDoll);
+                    var mc = Minecraft.getInstance();
+                    var data = CurseData.get(mc.level);
+                    var curse = data.getCurse(message.sourceDoll);
                     if (curse != null)
-                        curse.forceOccur();
+                        curse.forceOccur(mc.level);
                 }
             });
             ctx.get().setPacketHandled(true);

@@ -5,16 +5,16 @@ import de.ellpeck.voodoodolls.VoodooDollBlockEntity;
 import de.ellpeck.voodoodolls.VoodooDolls;
 import de.ellpeck.voodoodolls.curses.events.CurseEvent;
 import de.ellpeck.voodoodolls.curses.triggers.CurseTrigger;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraft.world.World;
+import net.minecraft.ChatFormatting;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.common.util.INBTSerializable;
 
 import java.util.UUID;
 
-public class Curse implements INBTSerializable<CompoundNBT> {
+public class Curse implements INBTSerializable<CompoundTag> {
 
     public UUID sourceDoll;
     public String dollName;
@@ -24,10 +24,7 @@ public class Curse implements INBTSerializable<CompoundNBT> {
     public String playerName;
     public boolean isInactive;
 
-    private final World level;
-
-    public Curse(World level, UUID sourceDoll, String dollName, UUID playerId, String playerName, CurseTrigger trigger, CurseEvent event) {
-        this.level = level;
+    public Curse(UUID sourceDoll, String dollName, UUID playerId, String playerName, CurseTrigger trigger, CurseEvent event) {
         this.sourceDoll = sourceDoll;
         this.dollName = dollName;
         this.playerId = playerId;
@@ -36,14 +33,13 @@ public class Curse implements INBTSerializable<CompoundNBT> {
         this.event = event;
     }
 
-    public Curse(World level, CompoundNBT nbt) {
-        this.level = level;
+    public Curse(CompoundTag nbt) {
         this.deserializeNBT(nbt);
     }
 
     @Override
-    public CompoundNBT serializeNBT() {
-        CompoundNBT nbt = new CompoundNBT();
+    public CompoundTag serializeNBT() {
+        var nbt = new CompoundTag();
         nbt.putString("trigger", this.trigger.id);
         nbt.putString("event", this.event.id);
         nbt.putUUID("source", this.sourceDoll);
@@ -55,7 +51,7 @@ public class Curse implements INBTSerializable<CompoundNBT> {
     }
 
     @Override
-    public void deserializeNBT(CompoundNBT nbt) {
+    public void deserializeNBT(CompoundTag nbt) {
         this.trigger = CurseTrigger.TRIGGERS.get(nbt.getString("trigger"));
         this.event = CurseEvent.EVENTS.get(nbt.getString("event"));
         this.sourceDoll = nbt.getUUID("source");
@@ -65,48 +61,48 @@ public class Curse implements INBTSerializable<CompoundNBT> {
         this.isInactive = nbt.getBoolean("inactive");
     }
 
-    public void occurRandomly() {
+    public void occurRandomly(Level level) {
         if (this.isInactive || !this.event.isEnabled())
             return;
-        PlayerEntity player = this.getPlayer();
+        var player = this.getPlayer(level);
         if (player != null && player.getRandom().nextFloat() <= this.event.chance.get())
-            this.forceOccur();
+            this.forceOccur(level);
     }
 
-    public void forceOccur() {
-        PlayerEntity player = this.getPlayer();
+    public void forceOccur(Level level) {
+        var player = this.getPlayer(level);
         if (player != null) {
             this.event.occur(player, this);
             if (!player.level.isClientSide) {
                 Packets.sendTo(player, new Packets.CurseOccurs(this.sourceDoll));
-                player.displayClientMessage(new TranslationTextComponent("info." + VoodooDolls.ID + ".curse_triggered", this.dollName, this.event.getDisplayName()).withStyle(TextFormatting.RED), false);
+                player.displayClientMessage(new TranslatableComponent("info." + VoodooDolls.ID + ".curse_triggered", this.dollName, this.event.getDisplayName()).withStyle(ChatFormatting.RED), false);
             }
         }
     }
 
-    public PlayerEntity getPlayer() {
-        return this.level.getPlayerByUUID(this.playerId);
+    public Player getPlayer(Level level) {
+        return level.getPlayerByUUID(this.playerId);
     }
 
-    public TranslationTextComponent getDisplayName() {
-        return new TranslationTextComponent("info." + VoodooDolls.ID + ".curse", this.event.getDisplayName(), this.trigger.getDisplayName());
+    public TranslatableComponent getDisplayName() {
+        return new TranslatableComponent("info." + VoodooDolls.ID + ".curse", this.event.getDisplayName(), this.trigger.getDisplayName());
     }
 
-    public static Curse create(PlayerEntity player, VoodooDollBlockEntity source) {
-        CurseTrigger[] triggers = CurseTrigger.TRIGGERS.values().stream()
+    public static Curse create(Player player, VoodooDollBlockEntity source) {
+        var triggers = CurseTrigger.TRIGGERS.values().stream()
                 .filter(CurseTrigger::isEnabled)
                 .toArray(CurseTrigger[]::new);
         if (triggers.length <= 0)
             return null;
-        CurseEvent[] events = CurseEvent.EVENTS.values().stream()
+        var events = CurseEvent.EVENTS.values().stream()
                 .filter(CurseEvent::isEnabled)
                 .filter(e -> source.getTier().isBadnessAllowed.apply(e.badness.get()))
                 .toArray(CurseEvent[]::new);
         if (events.length <= 0)
             return null;
 
-        CurseEvent event = events[player.getRandom().nextInt(events.length)];
-        CurseTrigger trigger = triggers[player.getRandom().nextInt(triggers.length)];
-        return new Curse(player.level, source.dollId, source.getName().getString(), player.getUUID(), player.getGameProfile().getName(), trigger, event);
+        var event = events[player.getRandom().nextInt(events.length)];
+        var trigger = triggers[player.getRandom().nextInt(triggers.length)];
+        return new Curse(source.dollId, source.getName().getString(), player.getUUID(), player.getGameProfile().getName(), trigger, event);
     }
 }

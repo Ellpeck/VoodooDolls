@@ -1,8 +1,8 @@
 package de.ellpeck.voodoodolls.curses.triggers;
 
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -14,11 +14,11 @@ public class EatTrigger extends CurseTrigger {
 
     @SubscribeEvent
     public void onEat(LivingEntityUseItemEvent.Finish event) {
-        LivingEntity entity = event.getEntityLiving();
-        if (!entity.level.isClientSide && entity instanceof PlayerEntity) {
-            ItemStack item = event.getItem();
+        var entity = event.getEntityLiving();
+        if (!entity.level.isClientSide && entity instanceof Player player) {
+            var item = event.getItem();
             if (item.isEdible())
-                this.trigger((PlayerEntity) entity);
+                this.trigger(player);
         }
     }
 

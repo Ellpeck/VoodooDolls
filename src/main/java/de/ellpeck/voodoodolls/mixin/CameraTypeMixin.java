@@ -1,14 +1,14 @@
 package de.ellpeck.voodoodolls.mixin;
 
 import de.ellpeck.voodoodolls.curses.events.TopDownCameraEvent;
-import net.minecraft.client.settings.PointOfView;
+import net.minecraft.client.CameraType;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(PointOfView.class)
-public class PointOfViewMixin {
+@Mixin(CameraType.class)
+public class CameraTypeMixin {
 
     @Inject(method = "isFirstPerson()Z", at = @At("RETURN"), cancellable = true)
     private void isFirstPerson(CallbackInfoReturnable<Boolean> callback) {

@@ -2,7 +2,7 @@ package de.ellpeck.voodoodolls.curses.events;
 
 import de.ellpeck.voodoodolls.curses.Curse;
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.player.Player;
 
 public class TopDownCameraEvent extends TimedEvent {
 
@@ -14,12 +14,12 @@ public class TopDownCameraEvent extends TimedEvent {
     }
 
     @Override
-    public void occur(PlayerEntity player, Curse curse) {
-        if (player.level.isClientSide && player.level.getGameTime() >= stopTime)
-            stopTime = player.level.getGameTime() + this.getRandomMinutes(player) * 20 * 60;
+    public void occur(Player player, Curse curse) {
+        if (player.level.isClientSide && player.level.getGameTime() >= TopDownCameraEvent.stopTime)
+            TopDownCameraEvent.stopTime = player.level.getGameTime() + this.getRandomMinutes(player) * 20 * 60;
     }
 
     public static boolean isActive() {
-        return Minecraft.getInstance().level.getGameTime() < stopTime;
+        return Minecraft.getInstance().level.getGameTime() < TopDownCameraEvent.stopTime;
     }
 }

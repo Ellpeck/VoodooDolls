@@ -1,15 +1,15 @@
 package de.ellpeck.voodoodolls.curses.events;
 
 import de.ellpeck.voodoodolls.curses.Curse;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.monster.ZombieEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.IDyeableArmorItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.monster.Zombie;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.DyeableArmorItem;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 import java.util.ArrayList;
@@ -40,14 +40,14 @@ public class ZombieHordeEvent extends CurseEvent {
     }
 
     @Override
-    public void occur(PlayerEntity player, Curse curse) {
+    public void occur(Player player, Curse curse) {
         if (player.level.isClientSide)
             return;
         List<BlockPos> validPositions = new ArrayList<>();
-        for (int y = -this.verticalRange.get(); y <= this.verticalRange.get(); y++) {
-            for (int x = -this.horizontalRange.get(); x <= this.horizontalRange.get(); x++) {
-                for (int z = -this.horizontalRange.get(); z <= this.horizontalRange.get(); z++) {
-                    BlockPos pos = new BlockPos(player.getX() + x, player.getY() + y, player.getZ() + z);
+        for (var y = -this.verticalRange.get(); y <= this.verticalRange.get(); y++) {
+            for (var x = -this.horizontalRange.get(); x <= this.horizontalRange.get(); x++) {
+                for (var z = -this.horizontalRange.get(); z <= this.horizontalRange.get(); z++) {
+                    var pos = new BlockPos(player.getX() + x, player.getY() + y, player.getZ() + z);
                     if (!player.level.getBlockState(pos.below()).isCollisionShapeFullBlock(player.level, pos.below()))
                         continue;
                     if (!player.level.isEmptyBlock(pos) || !player.level.isEmptyBlock(pos.above()))
@@ -58,14 +58,14 @@ public class ZombieHordeEvent extends CurseEvent {
         }
         if (validPositions.isEmpty())
             return;
-        int amount = MathHelper.nextInt(player.getRandom(), (int) (this.amount.get() * 0.75F), (int) (this.amount.get() * 1.25F));
+        var amount = Mth.nextInt(player.getRandom(), (int) (this.amount.get() * 0.75F), (int) (this.amount.get() * 1.25F));
         while (amount > 0) {
-            BlockPos pos = validPositions.remove(player.getRandom().nextInt(validPositions.size()));
-            ZombieEntity zombie = EntityType.ZOMBIE.create(player.level);
-            ItemStack helmet = new ItemStack(Items.LEATHER_HELMET);
-            ((IDyeableArmorItem) helmet.getItem()).setColor(helmet, player.getRandom().nextInt());
-            zombie.setItemSlot(EquipmentSlotType.HEAD, helmet);
-            zombie.setDropChance(EquipmentSlotType.HEAD, 0);
+            var pos = validPositions.remove(player.getRandom().nextInt(validPositions.size()));
+            var zombie = EntityType.ZOMBIE.create(player.level);
+            var helmet = new ItemStack(Items.LEATHER_HELMET);
+            ((DyeableArmorItem) helmet.getItem()).setColor(helmet, player.getRandom().nextInt());
+            zombie.setItemSlot(EquipmentSlot.HEAD, helmet);
+            zombie.setDropChance(EquipmentSlot.HEAD, 0);
             zombie.moveTo(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
             zombie.setTarget(player);
             player.level.addFreshEntity(zombie);

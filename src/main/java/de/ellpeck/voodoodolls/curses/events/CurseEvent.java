@@ -2,11 +2,11 @@ package de.ellpeck.voodoodolls.curses.events;
 
 import de.ellpeck.voodoodolls.VoodooDolls;
 import de.ellpeck.voodoodolls.curses.Curse;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvents;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.TranslatableComponent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.common.MinecraftForge;
 
@@ -32,7 +32,7 @@ public abstract class CurseEvent {
             MinecraftForge.EVENT_BUS.register(this);
     }
 
-    public abstract void occur(PlayerEntity player, Curse curse);
+    public abstract void occur(Player player, Curse curse);
 
     public void setupConfig(ForgeConfigSpec.Builder config) {
         this.chance = config
@@ -47,20 +47,20 @@ public abstract class CurseEvent {
         return this.chance.get() > 0;
     }
 
-    public TranslationTextComponent getDisplayName() {
-        return new TranslationTextComponent("curse_event." + VoodooDolls.ID + "." + this.id);
+    public TranslatableComponent getDisplayName() {
+        return new TranslatableComponent("curse_event." + VoodooDolls.ID + "." + this.id);
     }
 
     public static void register(CurseEvent event) {
-        if (EVENTS.put(event.id, event) != null)
+        if (CurseEvent.EVENTS.put(event.id, event) != null)
             throw new IllegalArgumentException("An event with id " + event.id + " is already registered");
     }
 
-    protected static void teleportFancy(PlayerEntity player, BlockPos pos) {
+    protected static void teleportFancy(Player player, BlockPos pos) {
         player.teleportTo(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
         player.level.broadcastEntityEvent(player, (byte) 46);
-        player.level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ENDERMAN_TELEPORT, SoundCategory.PLAYERS, 1, 1);
-        player.level.playSound(null, player.xOld, player.yOld, player.zOld, SoundEvents.ENDERMAN_TELEPORT, SoundCategory.PLAYERS, 1, 1);
+        player.level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 1, 1);
+        player.level.playSound(null, player.xOld, player.yOld, player.zOld, SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 1, 1);
     }
 
     public enum Badness {

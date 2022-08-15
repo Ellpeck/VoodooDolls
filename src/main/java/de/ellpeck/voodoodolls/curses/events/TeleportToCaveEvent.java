@@ -1,10 +1,9 @@
 package de.ellpeck.voodoodolls.curses.events;
 
 import de.ellpeck.voodoodolls.curses.Curse;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.shapes.VoxelShape;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.phys.AABB;
 import net.minecraftforge.common.ForgeConfigSpec;
 
 import java.util.ArrayList;
@@ -27,28 +26,30 @@ public class TeleportToCaveEvent extends CurseEvent {
     }
 
     @Override
-    public void occur(PlayerEntity player, Curse curse) {
+    public void occur(Player player, Curse curse) {
         if (player.level.isClientSide)
             return;
         List<BlockPos> validPositions = new ArrayList<>();
-        for (int y = player.level.getSeaLevel(); y > 0; y--) {
-            for (int x = -this.range.get(); x <= this.range.get(); x++) {
-                for (int z = -this.range.get(); z <= this.range.get(); z++) {
-                    BlockPos pos = new BlockPos(player.getX() + x, y, player.getZ() + z);
+        for (var y = player.level.getSeaLevel(); y > 0; y--) {
+            for (var x = -this.range.get(); x <= this.range.get(); x++) {
+                for (var z = -this.range.get(); z <= this.range.get(); z++) {
+                    var pos = new BlockPos(player.getX() + x, y, player.getZ() + z);
                     if (player.level.canSeeSky(pos))
                         continue;
-                    BlockPos below = pos.below();
+                    var below = pos.below();
                     if (!player.level.getBlockState(below).entityCanStandOn(player.level, below, player))
                         continue;
-                    AxisAlignedBB box = player.getType().getDimensions().makeBoundingBox(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
-                    if (!player.level.getBlockCollisions(player, box).allMatch(VoxelShape::isEmpty))
-                        continue;
+                    var box = player.getType().getDimensions().makeBoundingBox(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5);
+                    for (var collision : player.level.getBlockCollisions(player, box)) {
+                        if (!collision.isEmpty())
+                            continue;
+                    }
                     validPositions.add(pos);
                 }
             }
         }
         if (validPositions.isEmpty())
             return;
-        teleportFancy(player, validPositions.get(player.getRandom().nextInt(validPositions.size())));
+        CurseEvent.teleportFancy(player, validPositions.get(player.getRandom().nextInt(validPositions.size())));
     }
 }
