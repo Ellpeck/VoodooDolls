@@ -20,6 +20,7 @@ public class TopDownCameraEvent extends TimedEvent {
     }
 
     public static boolean isActive() {
-        return Minecraft.getInstance().level.getGameTime() < TopDownCameraEvent.stopTime;
+        var level = Minecraft.getInstance().level;
+        return level != null && level.getGameTime() < TopDownCameraEvent.stopTime;
     }
 }
